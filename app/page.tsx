@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -87,9 +88,12 @@ export default function Home() {
               smash the button.
             </p>
           </div>
-          <a href="#work" className={`${styles.button} ${styles.buttonPink}`}>
-            SEE THE WORK ↓
-          </a>
+          <Link
+            href="/work"
+            className={`${styles.button} ${styles.buttonPink}`}
+          >
+            SEE THE WORK →
+          </Link>
         </section>
       </div>
 
@@ -111,9 +115,12 @@ export default function Home() {
             teardown, and a search flow that finds the code before you give
             up.
           </p>
-          <a href="#" className={`${styles.button} ${styles.buttonYellow}`}>
+          <Link
+            href="/coming-soon"
+            className={`${styles.button} ${styles.buttonYellow}`}
+          >
             VIEW CASE STUDY →
-          </a>
+          </Link>
         </section>
         <div className={styles.rightCol}>
           <section className={styles.embracePanel}>
@@ -127,9 +134,12 @@ export default function Home() {
               A personality-first dating app concept. Profiles open with how
               you think, not how you look.
             </p>
-            <a href="#" className={`${styles.button} ${styles.buttonCream}`}>
+            <Link
+              href="/work/embrace"
+              className={`${styles.button} ${styles.buttonCream}`}
+            >
               VIEW CASE STUDY →
-            </a>
+            </Link>
           </section>
           <section className={styles.blogPanel}>
             <div className={styles.blogGlyph} aria-hidden="true">
@@ -138,9 +148,12 @@ export default function Home() {
             <div className={styles.newPostSticker}>NEW POST ★</div>
             <h3 className={styles.blogHeading}>Thoughts &amp; Writing</h3>
             <p className={styles.blogBody}>Read the blogs here</p>
-            <a href="#" className={`${styles.button} ${styles.buttonCobalt}`}>
+            <Link
+              href="/coming-soon"
+              className={`${styles.button} ${styles.buttonCobalt}`}
+            >
               READ THE BLOG →
-            </a>
+            </Link>
           </section>
         </div>
       </div>

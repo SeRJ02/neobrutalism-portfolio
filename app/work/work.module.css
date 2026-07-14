@@ -1,0 +1,130 @@
+/* ===== Work header ===== */
+.pageHeader {
+  position: relative;
+  overflow: hidden;
+  background: #ff2e88;
+  border: 5px solid #111;
+  padding: clamp(28px, 5vh, 48px) clamp(20px, 4vw, 32px);
+  text-align: center;
+}
+
+.pageHeaderTag {
+  display: inline-block;
+  background: #fff6e8;
+  border: 4px solid #111;
+  box-shadow: 5px 5px 0 #111;
+  padding: 5px 14px;
+  font-family: var(--font-anton), sans-serif;
+  font-size: clamp(12px, 1.4vw, 15px);
+  letter-spacing: 3px;
+  transform: rotate(-2deg);
+}
+
+.pageHeaderTitle {
+  font-family: var(--font-baloo), cursive;
+  font-weight: 800;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  line-height: 0.95;
+  margin: clamp(12px, 2vh, 18px) 0 clamp(8px, 1.5vh, 12px);
+  color: #fff6e8;
+  filter: drop-shadow(4px 4px 0 #111);
+  letter-spacing: -1px;
+}
+
+.pageHeaderBody {
+  font-family: var(--font-public-sans), sans-serif;
+  font-size: clamp(14px, 1.6vw, 17px);
+  font-weight: 600;
+  color: #111;
+  margin: 0;
+}
+
+/* ===== Card grid ===== */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 8px;
+}
+
+/* ===== Case study card ===== */
+.card {
+  position: relative;
+  overflow: hidden;
+  background: #fff6e8;
+  border: 5px solid #111;
+  padding: clamp(20px, 3vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-decoration: none;
+  color: #111;
+  background-image: radial-gradient(rgba(17, 17, 17, 0.07) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  transition: transform 0.08s;
+}
+
+.card:hover {
+  transform: translate(3px, 3px);
+  color: #111;
+}
+
+.cardGlyph {
+  position: absolute;
+  bottom: -30px;
+  right: -14px;
+  font-family: var(--font-baloo), cursive;
+  font-weight: 800;
+  font-size: 130px;
+  color: #ffc700;
+  text-shadow: 5px 5px 0 #111;
+  transform: rotate(-8deg);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.cardChip {
+  display: inline-flex;
+  align-self: flex-start;
+  background: #111;
+  color: #ffc700;
+  border: 3px solid #111;
+  padding: 4px 10px;
+  font-family: var(--font-anton), sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.cardTitle {
+  position: relative;
+  font-family: var(--font-anton), sans-serif;
+  font-size: clamp(28px, 3.4vw, 40px);
+  margin: 0;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.cardBody {
+  position: relative;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+  max-width: 90%;
+}
+
+.cardLink {
+  position: relative;
+  align-self: flex-start;
+  border: 4px solid #111;
+  background: #ffc700;
+  color: #111;
+  box-shadow: 6px 6px 0 #111;
+  padding: 10px 18px;
+  font-family: var(--font-anton), sans-serif;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+}
+
+.card:hover .cardLink {
+  box-shadow: 2px 2px 0 #111;
+}

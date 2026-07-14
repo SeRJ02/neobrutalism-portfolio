@@ -1,0 +1,3663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Bumble — Complete Product Teardown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&family=Archivo+Black&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="__inlined-slides-4-10-css">
+/* ========================================================================
+   SHARED SCAFFOLDING for slides 4-10
+   ======================================================================== */
+.slide{
+  position:relative; width:100%; height:100%;
+  background:var(--paper);
+  overflow:hidden;
+  display:flex; flex-direction:column;
+  padding:56px 80px;
+  box-sizing:border-box;
+  color:var(--ink);
+}
+.slide.yellow{ background:var(--yellow); }
+
+.slide-head{
+  display:flex; align-items:center;
+  border-bottom:2px solid var(--ink);
+  padding-bottom:18px; margin-bottom:26px;
+  gap:32px;
+}
+.slide-head .num{
+  font-family:'Archivo Black',sans-serif;
+  font-size:64px; line-height:.9; letter-spacing:-.04em;
+  flex:0 0 auto;
+}
+.slide-head .title{
+  font-family:'Archivo',sans-serif; font-weight:800;
+  font-size:50px; letter-spacing:-.02em;
+  white-space:nowrap; line-height:1;
+}
+.slide-head .sub{
+  margin-left:auto;
+  font-family:'JetBrains Mono',monospace;
+  font-size:18px; letter-spacing:.18em; text-transform:uppercase;
+  color:#5a5a5a;
+  flex:0 0 auto;
+}
+
+.slide-body{ flex:1; min-height:0; display:flex; flex-direction:column; }
+.slide-foot{
+  margin-top:14px;
+  display:flex; justify-content:flex-end;
+  font-family:'JetBrains Mono',monospace;
+  font-size:20px; letter-spacing:.22em; text-transform:uppercase;
+  color:#7a7a7a;
+}
+
+.intro{
+  font-family:'Archivo',sans-serif; font-weight:500;
+  font-size:26px; line-height:1.4;
+  letter-spacing:-.005em;
+  color:#1a1a1a;
+  margin:0 0 18px 0;
+}
+.intro b{ font-weight:800; }
+
+.dark-callout{
+  background:var(--ink); color:var(--paper);
+  padding:20px 26px;
+  border-radius:4px;
+  display:flex; align-items:flex-start; gap:24px;
+  min-height:fit-content;
+}
+.dark-callout .k{
+  flex:0 0 auto;
+  font-family:'JetBrains Mono',monospace;
+  font-size:18px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--yellow);
+  padding-top:4px;
+  max-width:180px;
+}
+.dark-callout .t{
+  flex:1;
+  font-family:'Archivo',sans-serif; font-weight:600;
+  font-size:24px; line-height:1.35;
+  letter-spacing:-.01em;
+  color:var(--paper);
+}
+.dark-callout .t b{ background:var(--yellow); color:var(--ink); padding:1px 8px; border-radius:3px;}
+
+.yellow-callout{
+  background:var(--yellow);
+  padding:18px 24px;
+  border-radius:4px;
+  border:2px solid var(--ink);
+}
+.yellow-callout .k{
+  font-family:'JetBrains Mono',monospace;
+  font-size:18px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink); opacity:.7;
+  margin-bottom:6px;
+}
+.yellow-callout .t{
+  font-family:'Archivo',sans-serif; font-weight:700;
+  font-size:24px; line-height:1.35; color:var(--ink);
+  letter-spacing:-.01em;
+}
+
+/* ========================================================================
+   SLIDE 4: BUSINESS MODEL
+   ======================================================================== */
+.s4-body{
+  display:grid;
+  grid-template-columns: .85fr 1.15fr;
+  gap:48px;
+  flex:1; min-height:0;
+}
+.s4-col-left{ display:flex; flex-direction:column; gap:18px; }
+
+.s4-math{
+  background:#f6f6f4; border:1.5px solid #e3e3e0;
+  border-radius:4px;
+  padding:18px 22px;
+}
+.s4-math-rows{ display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+.s4-math-row{
+  display:flex; align-items:baseline; gap:14px;
+  font-family:'Archivo',sans-serif;
+  font-size:24px; color:#1a1a1a;
+  letter-spacing:-.005em;
+}
+.s4-math-row .big{
+  font-family:'Archivo Black',sans-serif;
+  font-size:32px; letter-spacing:-.025em;
+  color:var(--ink);
+}
+
+.s4-revenue{ display:flex; flex-direction:column; }
+.s4-revenue-head{
+  display:grid; grid-template-columns: 1.1fr 1.1fr 2fr;
+  gap:18px;
+  padding:8px 0 10px;
+  border-bottom:2px solid var(--ink);
+  font-family:'JetBrains Mono',monospace;
+  font-size:14px; letter-spacing:.16em; text-transform:uppercase;
+  color:#5a5a5a;
+}
+.s4-revenue-row{
+  display:grid; grid-template-columns: 1.1fr 1.1fr 2fr;
+  gap:18px; align-items:start;
+  padding:10px 0;
+  border-bottom:1px solid #e3e3e0;
+}
+.s4-revenue-row .name{
+  font-family:'Archivo Black',sans-serif;
+  font-size:22px; letter-spacing:-.015em;
+  color:var(--ink);
+}
+.s4-revenue-row .what{
+  font-family:'Archivo',sans-serif; font-weight:700;
+  font-size:18px; color:var(--ink);
+  line-height:1.3; letter-spacing:-.005em;
+}
+.s4-revenue-row .how{
+  font-family:'Archivo',sans-serif; font-weight:500;
+  font-size:18px; line-height:1.35; color:#2a2a2a;
+  letter-spacing:-.005em;
+}
+
+/* ========================================================================
+   SLIDE 5: BEEHIVE
+   ======================================================================== */
+.s5-intro{
+  font-family:'Archivo',sans-serif; font-weight:500;
+  font-size:23px; line-height:1.4;
+  margin-bottom:18px;
+  letter-spacing:-.005em;
+}
+.s5-intro b{ font-weight:800; }
+
+.s5-cols{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1.25fr;
+  gap:22px;
+  flex:1; min-height:0;
+}
+.s5-block{
+  display:flex; flex-direction:column;
+  border:1.5px solid #e3e3e0; border-radius:4px;
+  background:#fafaf8;
+  overflow:hidden;
+}
+.s5-block-head{
+  background:var(--ink); color:var(--paper);
+  padding:10px 16px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:16px; letter-spacing:.16em; text-transform:uppercase;
+}
+.s5-block-grid{
+  display:grid;
+  grid-template-columns: 1fr 60px;
+  font-family:'Archivo',sans-serif;
+}
+.s5-block-grid .row{
+  display:contents;
+}
+.s5-block-grid .row > *{
+  padding:10px 14px;
+  border-bottom:1px solid #e3e3e0;
+  font-size:18px;
+  color:#1a1a1a;
+  line-height:1.3;
+  letter-spacing:-.005em;
+}
+.s5-block-grid .row:last-child > *{ border-bottom:none; }
+.s5-block-grid .row .sig{ font-weight:600; }
+.s5-block-grid .row .wt{
+  font-family:'Archivo Black',sans-serif;
+  font-size:22px; letter-spacing:-.025em;
+  text-align:right;
+  color:var(--ink);
+}
+
+/* modifiers block uses 1-column rows */
+.s5-mod-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+}
+.s5-mod-grid .row{
+  padding:9px 14px;
+  border-bottom:1px solid #e3e3e0;
+}
+.s5-mod-grid .row:last-child{ border-bottom:none; }
+.s5-mod-grid .behavior{
+  font-family:'Archivo',sans-serif; font-weight:700;
+  font-size:17px; color:var(--ink);
+  letter-spacing:-.005em;
+  line-height:1.25;
+}
+.s5-mod-grid .effect{
+  font-family:'Archivo',sans-serif; font-weight:500;
+  font-size:16px; color:#3a3a3a;
+  line-height:1.3;
+  margin-top:2px;
+}
+
+.s5-bottom{
+  display:grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap:22px;
+  margin-top:18px;
+}
+.s5-biases{
+  background:var(--yellow);
+  padding:16px 22px;
+  border-radius:4px;
+  border:2px solid var(--ink);
+}
+.s5-biases .k{
+  font-family:'JetBrains Mono',monospace;
+  font-size:18px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink); margin-bottom:8px;
+}
+.s5-biases ol{
+  margin:0; padding-left:0; list-style:none;
+  display:flex; flex-direction:column; gap:4px;
+}
+.s5-biases li{
+  font-family:'Archivo',sans-serif; font-weight:600;
+  font-size:18px; line-height:1.3;
+  color:var(--ink);
+  letter-spacing:-.005em;
+}
+.s5-biases li b{ font-weight:900; text-transform:uppercase; letter-spacing:.04em;}
+
+.s5-quote{
+  background:var(--ink); color:var(--paper);
+  padding:18px 22px;
+  border-radius:4px;
+  display:flex; flex-direction:column; justify-content:center;
+  font-family:'Archivo',sans-serif; font-weight:600;
+  font-size:20px; line-height:1.35;
+  letter-spacing:-.01em;
+}
+
+/* ========================================================================
+   SLIDE 6: USER PERSONAS
+   ======================================================================== */
+.s6-intro{
+  font-family:'Archivo',sans-serif; font-weight:500;
+  font-size:21px; line-height:1.4;
+  margin-bottom:16px;
+  letter-spacing:-.005em;
+  max-width:1500px;
+}
+.s6-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:14px;
+  flex:1; min-height:0;
+}
+.persona{
+  background:#fafaf8;
+  border:1.5px solid #e3e3e0;
+  border-radius:4px;
+  padding:14px 16px;
+  display:flex; flex-direction:column;
+  gap:8px;
+  min-height:0; overflow:hidden;
+}
+.persona-head{
+  padding-bottom:8px;
+  border-bottom:1.5px solid var(--ink);
+}
+.persona-head .name{
+  font-family:'Archivo Black',sans-serif;
+  font-size:24px; letter-spacing:-.02em;
+  color:var(--ink);
+}
+.persona-head .meta{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+  color:#5a5a5a; margin-top:3px;
+}
+.persona-stats{
+  display:grid; grid-template-columns: 1fr; gap:3px;
+}
+.persona-stats .s{
+  display:flex; gap:6px; align-items:baseline;
+  font-family:'Archivo',sans-serif;
+  font-size:15px;
+  line-height:1.3;
+}
+.persona-stats .s .l{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  color:#6a6a6a; flex:0 0 78px;
+}
+.persona-stats .s .v{ color:#1a1a1a; font-weight:600;}
+
+.persona-score{
+  margin-top:4px;
+  padding:6px 8px;
+  background:var(--yellow);
+  border-radius:3px;
+  font-family:'Archivo',sans-serif; font-weight:700;
+  font-size:14px; color:var(--ink);
+  letter-spacing:-.005em;
+  line-height:1.3;
+}
+.persona-score b{ font-family:'Archivo Black',sans-serif; font-weight:900; }
+
+.persona-bio{
+  font-family:'Archivo',sans-serif;
+  font-size:14px; line-height:1.4; color:#2a2a2a;
+  letter-spacing:-.005em;
+}
+.persona-section .lbl{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--ink);
+  margin-bottom:4px;
+}
+.persona-section ul{
+  margin:0; padding:0; list-style:none;
+  display:flex; flex-direction:column; gap:3px;
+}
+.persona-section li{
+  font-family:'Archivo',sans-serif;
+  font-size:13px; line-height:1.35;
+  color:#1a1a1a;
+  letter-spacing:-.005em;
+  padding-left:10px;
+  position:relative;
+}
+.persona-section li::before{
+  content:""; position:absolute; left:0; top:7px;
+  width:4px; height:4px; background:var(--ink); border-radius:50%;
+}
+.persona-quote{
+  margin-top:auto;
+  padding:8px 10px;
+  background:var(--ink); color:var(--paper);
+  border-radius:3px;
+  font-family:'Archivo',sans-serif; font-style:italic;
+  font-weight:600;
+  font-size:14px; line-height:1.35;
+  letter-spacing:-.005em;
+}
+
+/* ========================================================================
+   SLIDE 7 & 8: NUMBERED POINTS
+   ======================================================================== */
+.points-grid{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:16px;
+  flex:1; min-height:0;
+}
+.point{
+  background:#fafaf8;
+  border:1.5px solid #e3e3e0;
+  border-radius:4px;
+  padding:22px 22px;
+  display:flex; flex-direction:column;
+  gap:14px;
+}
+.point.neg{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.point .n{
+  font-family:'Archivo Black',sans-serif;
+  font-size:54px; line-height:.9; letter-spacing:-.04em;
+  color:var(--ink);
+}
+.point.neg .n{ color:var(--yellow); }
+.point.neg .n + .h{ color:var(--yellow); }
+
+.point .h{
+  font-family:'Archivo',sans-serif; font-weight:800;
+  font-size:22px; line-height:1.15;
+  text-transform:uppercase;
+  letter-spacing:-.005em;
+  color:var(--ink);
+  border-bottom:1.5px solid var(--ink);
+  padding-bottom:10px;
+}
+.point.neg .h{ border-bottom-color:var(--yellow); }
+
+.point .p{
+  font-family:'Archivo',sans-serif; font-weight:500;
+  font-size:17px; line-height:1.4;
+  color:#1a1a1a;
+  letter-spacing:-.005em;
+}
+.point.neg .p{ color:#e8e8e6; }
+
+/* ========================================================================
+   SLIDE 9: RECOMMENDATIONS WITH TRADE-OFFS
+   ======================================================================== */
+.rec-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:14px;
+  flex:1; min-height:0;
+}
+.rec{
+  background:#fafaf8;
+  border:1.5px solid #e3e3e0;
+  border-radius:4px;
+  padding:16px 18px;
+  display:flex; flex-direction:column;
+  gap:10px;
+}
+.rec .n{
+  font-family:'Archivo Black',sans-serif;
+  font-size:36px; line-height:.9; letter-spacing:-.04em;
+  color:var(--ink);
+}
+.rec .h{
+  font-family:'Archivo',sans-serif; font-weight:800;
+  font-size:18px; line-height:1.15;
+  text-transform:uppercase;
+  letter-spacing:-.005em;
+  color:var(--ink);
+  padding-bottom:8px;
+  border-bottom:1.5px solid var(--ink);
+}
+.rec .p{
+  font-family:'Archivo',sans-serif; font-weight:500;
+  font-size:14px; line-height:1.4;
+  color:#1a1a1a;
+  letter-spacing:-.005em;
+}
+.rec .trade{
+  margin-top:auto;
+  padding:8px 10px;
+  background:var(--yellow);
+  border-radius:3px;
+  font-family:'Archivo',sans-serif;
+  font-size:13px; line-height:1.35;
+  color:var(--ink);
+  letter-spacing:-.005em;
+}
+.rec .trade .tl{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+  display:block; margin-bottom:3px;
+  font-weight:700;
+}
+
+.rec.we-met{
+  grid-column: span 3;
+  background:var(--ink); color:var(--paper);
+  border-color:var(--ink);
+}
+.rec.we-met .n{ color:var(--yellow); }
+.rec.we-met .h{ color:var(--yellow); border-bottom-color:var(--yellow); font-size:22px; }
+.rec.we-met .p{ color:#e8e8e6; font-size:15px;}
+.rec.we-met .we-grid{
+  display:grid; grid-template-columns: repeat(3, 1fr); gap:14px;
+  margin-top:6px;
+}
+.rec.we-met .we-grid > div{
+  padding:10px 12px;
+  background:rgba(255,198,41,.1);
+  border:1px solid var(--yellow);
+  border-radius:3px;
+}
+.rec.we-met .we-grid h4{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  margin:0 0 5px 0; color:var(--yellow);
+}
+.rec.we-met .we-grid ul{
+  margin:0; padding:0; list-style:none;
+  display:flex; flex-direction:column; gap:3px;
+}
+.rec.we-met .we-grid li{
+  font-family:'Archivo',sans-serif;
+  font-size:13px; line-height:1.35;
+  color:#e8e8e6;
+  letter-spacing:-.005em;
+  padding-left:9px; position:relative;
+}
+.rec.we-met .we-grid li::before{
+  content:""; position:absolute; left:0; top:6px;
+  width:4px; height:4px; background:var(--yellow); border-radius:50%;
+}
+
+/* ========================================================================
+   SLIDE 10: ROADMAP
+   ======================================================================== */
+.s10-body{
+  display:grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap:30px;
+  flex:1; min-height:0;
+}
+
+.roadmap-table{
+  display:flex; flex-direction:column;
+}
+.rt-head{
+  display:grid;
+  grid-template-columns: 2.2fr 1fr 1fr 1fr .6fr;
+  gap:14px;
+  padding:8px 0 10px;
+  border-bottom:2px solid var(--ink);
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  color:#5a5a5a;
+}
+.rt-row{
+  display:grid;
+  grid-template-columns: 2.2fr 1fr 1fr 1fr .6fr;
+  gap:14px; align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid #e3e3e0;
+}
+.rt-row .feat{
+  font-family:'Archivo',sans-serif; font-weight:800;
+  font-size:17px; color:var(--ink);
+  letter-spacing:-.005em;
+  line-height:1.25;
+}
+.rt-row .cell{
+  font-family:'Archivo',sans-serif; font-weight:600;
+  font-size:14px; color:#2a2a2a;
+}
+.rt-row .cell.high{ color:#1a1a1a; font-weight:800; }
+.rt-row .qchip{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  background:var(--ink); color:var(--yellow);
+  font-family:'Archivo Black',sans-serif;
+  font-size:14px; letter-spacing:.04em;
+  text-align:center;
+}
+.rt-row .qchip.q1{ background:var(--yellow); color:var(--ink); border:1.5px solid var(--ink); }
+.rt-row .qchip.q2{ background:#fff; color:var(--ink); border:1.5px solid var(--ink); }
+.rt-row .qchip.q3{ background:#3a3a3a; color:var(--yellow); }
+.rt-row .qchip.q4{ background:var(--ink); color:var(--yellow); }
+
+.s10-notes{
+  display:flex; flex-direction:column;
+  gap:10px;
+}
+.s10-note{
+  border-left:4px solid var(--ink);
+  padding:8px 14px;
+  background:#fafaf8;
+}
+.s10-note .lbl{
+  font-family:'Archivo Black',sans-serif;
+  font-size:22px; letter-spacing:-.02em;
+  color:var(--ink);
+  margin-bottom:4px;
+}
+.s10-note .lbl small{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; letter-spacing:.14em;
+  font-weight:400; color:#6a6a6a;
+  margin-left:8px;
+}
+.s10-note .t{
+  font-family:'Archivo',sans-serif; font-weight:500;
+  font-size:14px; line-height:1.4;
+  color:#1a1a1a;
+  letter-spacing:-.005em;
+}
+
+.s10-closer{
+  margin-top:14px;
+  background:var(--yellow);
+  border:2px solid var(--ink);
+  padding:18px 24px;
+  border-radius:4px;
+  font-family:'Archivo',sans-serif; font-weight:700;
+  font-size:24px; line-height:1.35;
+  color:var(--ink);
+  letter-spacing:-.01em;
+  text-align:center;
+}
+.s10-closer b{ background:var(--ink); color:var(--yellow); padding:2px 10px; border-radius:3px;}
+
+</style>
+<script>
+/**
+ * <deck-stage> — reusable web component for HTML decks.
+ *
+ * Handles:
+ *  (a) speaker notes — reads <script type="application/json" id=SPKNOTES>
+ *      and posts {slideIndexChanged: N} to the parent window on nav.
+ *  (b) keyboard navigation — ←/→, PgUp/PgDn, Space, Home/End, number keys.
+ *  (c) press R to reset to slide 0 (with a tasteful keyboard hint).
+ *  (d) bottom-center overlay showing slide count + hints, fades out on idle.
+ *  (e) auto-scaling — inner canvas is a fixed design size (default 1920×1080)
+ *      scaled with `transform: scale()` to fit the viewport, letterboxed.
+ *      Set the `noscale` attribute to render at authored size (1:1) — the
+ *      PPTX exporter sets this so its DOM capture sees unscaled geometry.
+ *  (f) print — `@media print` lays every slide out as its own page at the
+ *      design size, so the browser's Print → Save as PDF produces a clean
+ *      one-page-per-slide PDF with no extra setup.
+ *  (g) thumbnail rail — resizable left-hand column of per-slide thumbnails
+ *      (static clones). Click to navigate; ↑/↓ with a thumbnail focused to
+ *      step between slides; drag to reorder; right-click for
+ *      Skip / Move up / Move down / Delete (opens a Cancel/Delete confirm
+ *      dialog). Drag the rail's right edge to resize; width persists to
+ *      localStorage. Skipped slides carry `data-deck-skip`, are dimmed in
+ *      the rail, omitted from prev/next navigation, and hidden at print.
+ *      The rail is suppressed in presenting mode, on `noscale`, and via
+ *      the `no-rail` attribute. Rail mutations dispatch a `deckchange`
+ *      CustomEvent on the element: detail = {action, from, to, slide}.
+ *
+ * Slides are HIDDEN, not unmounted. Non-active slides stay in the DOM with
+ * `visibility: hidden` + `opacity: 0`, so their state (videos, iframes,
+ * form inputs, React trees) is preserved across navigation.
+ *
+ * Lifecycle event — the component dispatches a `slidechange` CustomEvent on
+ * itself whenever the active slide changes (including the initial mount).
+ * The event bubbles and composes out of shadow DOM, so you can listen on
+ * the <deck-stage> element or on document:
+ *
+ *   document.querySelector('deck-stage').addEventListener('slidechange', (e) => {
+ *     e.detail.index         // new 0-based index
+ *     e.detail.previousIndex // previous index, or -1 on init
+ *     e.detail.total         // total slide count
+ *     e.detail.slide         // the new active slide element
+ *     e.detail.previousSlide // the prior slide element, or null on init
+ *     e.detail.reason        // 'init' | 'keyboard' | 'click' | 'tap' | 'api'
+ *   });
+ *
+ * Persistence: none at the deck level. The host app keeps the current slide
+ * in its own URL (?slide=) and re-delivers it via location.hash on load, so a
+ * bare load with no hash always starts at slide 1.
+ *
+ * Usage:
+ *   <style>deck-stage:not(:defined){visibility:hidden}</style>
+ *   <deck-stage width="1920" height="1080">
+ *     <section data-label="Title">...</section>
+ *     <section data-label="Agenda">...</section>
+ *   </deck-stage>
+ *   <script src="deck-stage.js"><\/script>
+ *
+ * The :not(:defined) rule prevents a flash of the first slide at its
+ * authored styles before this script runs and attaches the shadow root.
+ *
+ * Slides are the direct element children of <deck-stage>. Each slide is
+ * automatically tagged with:
+ *   - data-screen-label="NN Label"   (1-indexed, for comment flow)
+ *   - data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text"
+ */
+
+(() => {
+  const DESIGN_W_DEFAULT = 1920;
+  const DESIGN_H_DEFAULT = 1080;
+  const OVERLAY_HIDE_MS = 1800;
+  const VALIDATE_ATTR = 'no_overflowing_text,no_overlapping_text,slide_sized_text';
+
+  const pad2 = (n) => String(n).padStart(2, '0');
+
+  const stylesheet = `
+    :host {
+      position: fixed;
+      inset: 0;
+      display: block;
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+    /* connectedCallback holds this until document.fonts.ready (capped 2s) so
+     * the first visible paint has the deck's real typography + final rail
+     * layout. opacity (not visibility) so the active slide can't un-hide
+     * itself via the ::slotted([data-deck-active]) visibility:visible rule.
+     * Only the stage/rail hide — the black :host background stays, so the
+     * iframe doesn't flash the page's default white. */
+    :host([data-fonts-pending]) .stage,
+    :host([data-fonts-pending]) .rail { opacity: 0; pointer-events: none; }
+
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .canvas {
+      position: relative;
+      transform-origin: center center;
+      flex-shrink: 0;
+      background: #fff;
+      will-change: transform;
+    }
+
+    /* Slides live in light DOM (via <slot>) so authored CSS still applies.
+       We absolutely position each slotted child to stack them. */
+    ::slotted(*) {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      box-sizing: border-box !important;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    ::slotted([data-deck-active]) {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    /* Tap zones for mobile — back/forward thirds like Stories.
+       Transparent, no visible UI, don't block the overlay. */
+    .tapzones {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      z-index: 2147482000;
+      pointer-events: none;
+    }
+    .tapzone {
+      flex: 1;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    /* Only activate tap zones on coarse pointers (touch devices). */
+    @media (hover: hover) and (pointer: fine) {
+      .tapzones { display: none; }
+    }
+
+    .overlay {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translate(-50%, 6px) scale(0.92);
+      filter: blur(6px);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      background: #000;
+      color: #fff;
+      border-radius: 999px;
+      font-size: 12px;
+      font-feature-settings: "tnum" 1;
+      letter-spacing: 0.01em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 260ms ease, transform 260ms cubic-bezier(.2,.8,.2,1), filter 260ms ease;
+      transform-origin: center bottom;
+      z-index: 2147483000;
+      user-select: none;
+    }
+    .overlay[data-visible] {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, 0) scale(1);
+      filter: blur(0);
+    }
+
+    .btn {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      color: inherit;
+      font: inherit;
+      cursor: default;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 999px;
+      color: rgba(255,255,255,0.72);
+      transition: background 140ms ease, color 140ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .btn:active { background: rgba(255,255,255,0.18); }
+    .btn:focus { outline: none; }
+    .btn:focus-visible { outline: none; }
+    .btn::-moz-focus-inner { border: 0; }
+    .btn svg { width: 14px; height: 14px; display: block; }
+    .btn.reset {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0 10px 0 12px;
+      gap: 6px;
+      color: rgba(255,255,255,0.72);
+    }
+    .btn.reset .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 10px;
+      line-height: 1;
+      color: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.12);
+      border-radius: 4px;
+    }
+
+    .count {
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+      font-weight: 500;
+      padding: 0 8px;
+      min-width: 42px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .count .sep { color: rgba(255,255,255,0.45); margin: 0 3px; font-weight: 400; }
+    .count .total { color: rgba(255,255,255,0.55); }
+
+    .divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(255,255,255,0.18);
+      margin: 0 2px;
+    }
+
+    /* ── Thumbnail rail ──────────────────────────────────────────────────
+       Fixed column on the left; each thumbnail is a static deep-clone of
+       the light-DOM slide scaled into a 16:9 (or design-aspect) frame. The
+       stage re-fits around it (see _fit); hidden during present / noscale
+       / print so capture geometry and fullscreen output are unchanged. */
+    .rail {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--deck-rail-w, 188px);
+      background: #141414;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 12px 10px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 2147482500;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.18) transparent;
+    }
+    .rail::-webkit-scrollbar { width: 8px; }
+    .rail::-webkit-scrollbar-track { background: transparent; margin: 2px; }
+    .rail::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.18);
+      border-radius: 4px;
+      border: 2px solid transparent;
+      background-clip: content-box;
+    }
+    .rail::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.28);
+      border: 2px solid transparent;
+      background-clip: content-box;
+    }
+    :host([no-rail]) .rail,
+    :host([noscale]) .rail { display: none; }
+    .rail[data-presenting] { display: none; }
+    /* User-driven show/hide (the TweaksPanel toggle) slides instead of
+       popping. Transitions are gated on :host([data-rail-anim]) — set only
+       for the 200ms around the toggle — so window-resize and rail-width
+       drag (which also call _fit) don't lag behind the cursor. */
+    .rail[data-user-hidden] { transform: translateX(-100%); }
+    :host([data-rail-anim]) .rail { transition: transform 200ms cubic-bezier(.3,.7,.4,1); }
+    :host([data-rail-anim]) .stage { transition: left 200ms cubic-bezier(.3,.7,.4,1); }
+    :host([data-rail-anim]) .canvas { transition: transform 200ms cubic-bezier(.3,.7,.4,1); }
+    /* transition shorthand replaces rather than merges — repeat the base
+       .overlay opacity/transform/filter transitions so visibility changes
+       during the 200ms toggle window still fade instead of popping. */
+    :host([data-rail-anim]) .overlay {
+      transition: margin-left 200ms cubic-bezier(.3,.7,.4,1),
+                  opacity 260ms ease,
+                  transform 260ms cubic-bezier(.2,.8,.2,1),
+                  filter 260ms ease;
+    }
+    :host([data-rail-anim]) .tapzones { transition: left 200ms cubic-bezier(.3,.7,.4,1); }
+
+    .thumb {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .thumb .num {
+      width: 16px;
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 500;
+      text-align: right;
+      color: rgba(255,255,255,0.55);
+      padding-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .thumb .frame {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+      aspect-ratio: var(--deck-aspect);
+      background: #fff;
+      border-radius: 4px;
+      outline: 2px solid transparent;
+      outline-offset: 0;
+      overflow: hidden;
+      transition: outline-color 120ms ease;
+    }
+    .thumb:hover .frame { outline-color: rgba(255,255,255,0.25); }
+    .thumb { outline: none; }
+    .thumb:focus-visible .frame { outline-color: rgba(255,255,255,0.5); }
+    .thumb[data-current] .num { color: #fff; }
+    .thumb[data-current] .frame { outline-color: #D97757; }
+    .thumb[data-dragging] { opacity: 0.35; }
+    .thumb::before {
+      content: '';
+      position: absolute;
+      left: 24px;
+      right: 0;
+      height: 3px;
+      border-radius: 2px;
+      background: #D97757;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .thumb[data-drop="before"]::before { top: -8px; opacity: 1; }
+    .thumb[data-drop="after"]::before { bottom: -8px; opacity: 1; }
+    .thumb[data-skip] .frame { opacity: 0.35; }
+    .thumb[data-skip] .frame::after {
+      content: 'Skipped';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .ctxmenu {
+      position: fixed;
+      min-width: 150px;
+      padding: 4px;
+      background: #242424;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 7px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+      z-index: 2147483100;
+      display: none;
+      font-size: 12px;
+    }
+    .ctxmenu[data-open] { display: block; }
+    .ctxmenu button {
+      display: block;
+      width: 100%;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #e8e8e8;
+      font: inherit;
+      text-align: left;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .ctxmenu button:hover:not(:disabled) { background: rgba(255,255,255,0.08); }
+    .ctxmenu button:disabled { opacity: 0.35; cursor: default; }
+    .ctxmenu hr {
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin: 4px 2px;
+    }
+
+    .rail-resize {
+      position: fixed;
+      left: calc(var(--deck-rail-w, 188px) - 3px);
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      cursor: col-resize;
+      z-index: 2147482600;
+      touch-action: none;
+    }
+    .rail-resize:hover,
+    .rail-resize[data-dragging] { background: rgba(255,255,255,0.12); }
+    :host([no-rail]) .rail-resize,
+    :host([noscale]) .rail-resize,
+    .rail[data-presenting] + .rail-resize,
+    .rail[data-user-hidden] + .rail-resize { display: none; }
+
+    /* Delete-confirm popup — matches the SPA's ConfirmDialog layout
+       (title + message body, depressed footer with Cancel / Delete). */
+    .confirm-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 2147483200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirm-backdrop[data-open] { display: flex; }
+    .confirm {
+      width: 320px;
+      max-width: calc(100vw - 32px);
+      background: #2a2a2a;
+      color: #e8e8e8;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      overflow: hidden;
+      font-family: inherit;
+      animation: deck-confirm-in 0.18s ease;
+    }
+    @keyframes deck-confirm-in {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .confirm .body { padding: 20px 20px 16px; }
+    .confirm .title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .confirm .msg { font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.65); }
+    .confirm .footer {
+      padding: 14px 20px;
+      background: #1f1f1f;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .confirm button {
+      appearance: none;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .confirm .cancel {
+      background: transparent;
+      border: 0;
+      color: rgba(255,255,255,0.8);
+    }
+    .confirm .cancel:hover { background: rgba(255,255,255,0.08); }
+    .confirm .danger {
+      background: #c96442;
+      border: 1px solid rgba(0,0,0,0.15);
+      color: #fff;
+      box-shadow: 0 1px 3px rgba(166,50,68,0.3), 0 2px 6px rgba(166,50,68,0.18);
+    }
+    .confirm .danger:hover { background: #b5563a; }
+
+    /* ── Print: one page per slide, no chrome ────────────────────────────
+       The screen layout stacks every slide at inset:0 inside a scaled
+       canvas; for print we want them in document flow at the authored
+       design size so the browser paginates one slide per sheet. The
+       @page size is set from the width/height attributes via the inline
+       <style id="deck-stage-print-page"> that connectedCallback injects
+       into <head> (the @page at-rule has no effect inside shadow DOM). */
+    @media print {
+      :host {
+        position: static;
+        inset: auto;
+        background: none;
+        overflow: visible;
+        color: inherit;
+      }
+      .stage { position: static; display: block; }
+      .canvas {
+        transform: none !important;
+        width: auto !important;
+        height: auto !important;
+        background: none;
+        will-change: auto;
+      }
+      ::slotted(*) {
+        position: relative !important;
+        inset: auto !important;
+        width: var(--deck-design-w) !important;
+        height: var(--deck-design-h) !important;
+        box-sizing: border-box !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto;
+        break-after: page;
+        page-break-after: always;
+        break-inside: avoid;
+        overflow: hidden;
+      }
+      /* :last-child alone isn't enough once data-deck-skip hides the
+         trailing slide(s) — the last *visible* slide still carries
+         break-after:page and prints a blank sheet. _markLastVisible()
+         maintains data-deck-last-visible on the last non-skipped slide. */
+      ::slotted(*:last-child),
+      ::slotted([data-deck-last-visible]) {
+        break-after: auto;
+        page-break-after: auto;
+      }
+      ::slotted([data-deck-skip]) { display: none !important; }
+      .overlay, .tapzones, .rail, .rail-resize, .ctxmenu, .confirm-backdrop { display: none !important; }
+    }
+  `;
+
+  class DeckStage extends HTMLElement {
+    static get observedAttributes() { return ['width', 'height', 'noscale', 'no-rail']; }
+
+    constructor() {
+      super();
+      this._root = this.attachShadow({ mode: 'open' });
+      this._index = 0;
+      this._slides = [];
+      this._notes = [];
+      this._hideTimer = null;
+      this._mouseIdleTimer = null;
+      this._menuIndex = -1;
+
+      this._onKey = this._onKey.bind(this);
+      this._onResize = this._onResize.bind(this);
+      this._onSlotChange = this._onSlotChange.bind(this);
+      this._onMouseMove = this._onMouseMove.bind(this);
+      this._onTapBack = this._onTapBack.bind(this);
+      this._onTapForward = this._onTapForward.bind(this);
+      this._onMessage = this._onMessage.bind(this);
+      // Capture-phase close so a click anywhere dismisses the menu, but
+      // ignore clicks that land inside the menu itself — otherwise the
+      // capture handler runs before the menu's own (bubble) handler and
+      // clears _menuIndex out from under it.
+      this._onDocClick = (e) => {
+        if (this._menu && e.composedPath && e.composedPath().includes(this._menu)) return;
+        this._closeMenu();
+      };
+    }
+
+    get designWidth() {
+      return parseInt(this.getAttribute('width'), 10) || DESIGN_W_DEFAULT;
+    }
+    get designHeight() {
+      return parseInt(this.getAttribute('height'), 10) || DESIGN_H_DEFAULT;
+    }
+
+    connectedCallback() {
+      // Presenter-view popup loads deckUrl?_snthumb=...#N for its prev/cur/
+      // next thumbnails — the rail has no business rendering inside those
+      // (wrong scale, and it offsets the stage so the thumb shows a gutter).
+      if (/[?&]_snthumb=/.test(location.search)) this.setAttribute('no-rail', '');
+      this._render();
+      this._loadNotes();
+      this._syncPrintPageRule();
+      window.addEventListener('keydown', this._onKey);
+      window.addEventListener('resize', this._onResize);
+      window.addEventListener('mousemove', this._onMouseMove, { passive: true });
+      window.addEventListener('message', this._onMessage);
+      window.addEventListener('click', this._onDocClick, true);
+      // Initial collection + layout happens via slotchange, which fires on mount.
+      this._enableRail();
+      // Hold the stage hidden until webfonts are ready so the first visible
+      // paint has the deck's real typography — the :not(:defined) guard in
+      // the page HTML only covers custom-element upgrade, not font load.
+      // Capped so a 404'd font URL can't blank the deck indefinitely.
+      this.setAttribute('data-fonts-pending', '');
+      const reveal = () => this.removeAttribute('data-fonts-pending');
+      // rAF first: fonts.ready is a pre-resolved promise until layout has
+      // resolved the slotted text's font-family and pushed a FontFace into
+      // 'loading'. Reading it here in connectedCallback (parse-time) would
+      // settle the race in a microtask before any font fetch starts.
+      requestAnimationFrame(() => {
+        Promise.race([
+          document.fonts ? document.fonts.ready : Promise.resolve(),
+          new Promise((r) => setTimeout(r, 2000)),
+        ]).then(reveal, reveal);
+      });
+    }
+
+    _enableRail() {
+      // Idempotent — older host builds still post __omelette_rail_enabled.
+      // no-rail guard keeps the observers/stylesheet walk off the cheap path
+      // for presenter-popup thumbnail iframes (up to 9 per view).
+      if (this._railEnabled || this.hasAttribute('no-rail')) return;
+      this._railEnabled = true;
+      // Per-viewer preference — restored alongside rail width. Default on;
+      // only a stored '0' (from the TweaksPanel toggle) hides it.
+      this._railVisible = true;
+      try {
+        if (localStorage.getItem('deck-stage.railVisible') === '0') this._railVisible = false;
+      } catch (e) {}
+      // Live thumbnail updates: watch the light-DOM slides for content
+      // edits and re-clone just the affected thumb(s), debounced. Ignore
+      // the data-deck-* / data-screen-label / data-om-validate attributes
+      // this component itself writes so nav and skip don't trigger
+      // spurious refreshes.
+      const OWN_ATTRS = /^data-(deck-|screen-label$|om-validate$)/;
+      this._liveDirty = new Set();
+      this._liveObserver = new MutationObserver((records) => {
+        for (const r of records) {
+          if (r.type === 'attributes' && OWN_ATTRS.test(r.attributeName || '')) continue;
+          let n = r.target;
+          while (n && n.parentElement !== this) n = n.parentElement;
+          if (n && this._slideSet && this._slideSet.has(n)) this._liveDirty.add(n);
+        }
+        if (this._liveDirty.size && !this._liveTimer) {
+          this._liveTimer = setTimeout(() => {
+            this._liveTimer = null;
+            this._liveDirty.forEach((s) => this._refreshThumb(s));
+            this._liveDirty.clear();
+          }, 200);
+        }
+      });
+      this._liveObserver.observe(this, {
+        subtree: true, childList: true, characterData: true, attributes: true,
+      });
+      // Lazy thumbnail materialization — clone the slide only when its
+      // frame scrolls into (or near) the rail viewport. rootMargin gives
+      // ~4 thumbs of pre-load so fast scrolling doesn't flash blanks.
+      this._railObserver = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && e.target.__deckThumb) {
+            this._materialize(e.target.__deckThumb);
+          }
+        });
+      }, { root: this._rail, rootMargin: '400px 0px' });
+      // Tweaks typically change CSS vars / attrs OUTSIDE <deck-stage>
+      // (on <html>, <body>, a wrapper div, or a <style> tag), which
+      // _liveObserver can't see. Re-snapshot author CSS (constructable
+      // sheet is shared by reference, so one replaceSync updates every
+      // thumb shadow root) and re-sync each thumb host's attrs + custom
+      // properties. In-slide DOM mutations are _liveObserver's job.
+      // Debounced so slider drags don't thrash.
+      this._onTweakChange = () => {
+        clearTimeout(this._tweakTimer);
+        this._tweakTimer = setTimeout(() => {
+          this._snapshotAuthorCss();
+          // One getComputedStyle for the whole batch — each
+          // getPropertyValue read below reuses the same computed style
+          // as long as nothing invalidates layout between thumbs.
+          const cs = getComputedStyle(this);
+          (this._thumbs || []).forEach((t) => {
+            if (t.host) this._syncThumbHostAttrs(t.host, cs);
+          });
+        }, 120);
+      };
+      window.addEventListener('tweakchange', this._onTweakChange);
+      this._snapshotAuthorCss();
+      // Build the rail now that it's enabled — slotchange already fired,
+      // so _renderRail's early-return skipped the initial build.
+      this._syncRailHidden();
+      this._renderRail();
+      this._fit();
+    }
+
+    /** Snapshot document stylesheets into a constructable sheet that each
+     *  thumbnail's nested shadow root adopts — so author CSS styles the
+     *  cloned slide content without touching this component's chrome.
+     *  Cross-origin sheets throw on .cssRules — skip them. Re-callable:
+     *  the existing constructable sheet is reused via replaceSync so every
+     *  already-adopted shadow root picks up the fresh CSS without re-adopt. */
+    _snapshotAuthorCss() {
+      // :root in an adopted sheet inside a shadow root matches nothing
+      // (only the document root qualifies), so author rules like
+      // `:root[data-voice="modern"] .serif` never reach the clones.
+      // Rewrite :root → :host and mirror <html>'s data-*/class/lang onto
+      // each thumb host (see _syncThumbHostAttrs) so the same selectors
+      // match inside the thumbnail's shadow tree.
+      const authorCss = Array.from(document.styleSheets).map((sh) => {
+        try {
+          return Array.from(sh.cssRules).map((r) => r.cssText).join('\n');
+        } catch (e) { return ''; }
+      }).join('\n')
+        // The shadow host is featureless outside the functional :host(...)
+        // form, so any compound on :root — [attr], .class, #id, :pseudo —
+        // must become :host(<compound>) not :host<compound>. Same for the
+        // html type selector (Tailwind class-strategy dark mode emits
+        // html.dark; Pico uses html[data-theme]), which has nothing to
+        // match inside the thumb's shadow tree.
+        .replace(/:root((?:\[[^\]]*\]|[.#][-\w]+|:[-\w]+(?:\([^)]*\))?)+)/g, ':host($1)')
+        .replace(/:root\b/g, ':host')
+        .replace(/(^|[\s,>~+(}])html((?:\[[^\]]*\]|[.#][-\w]+|:[-\w]+(?:\([^)]*\))?)+)(?![-\w])/g, '$1:host($2)')
+        .replace(/(^|[\s,>~+(}])html(?![-\w])/g, '$1:host');
+      // Every custom property the author references. _syncThumbHostAttrs
+      // mirrors each one's *computed* value at <deck-stage> onto the
+      // thumb host so the live value wins over the :host default above
+      // regardless of which ancestor the tweak wrote to (<html>, <body>,
+      // a wrapper div, or the deck-stage element itself all inherit
+      // down to getComputedStyle(this)).
+      this._authorVars = new Set(authorCss.match(/--[\w-]+/g) || []);
+      try {
+        if (!this._adoptedSheet) this._adoptedSheet = new CSSStyleSheet();
+        this._adoptedSheet.replaceSync(authorCss);
+      } catch (e) {
+        this._adoptedSheet = null;
+        this._authorCss = authorCss;
+      }
+    }
+
+    _syncThumbHostAttrs(host, cs) {
+      const de = document.documentElement;
+      // setAttribute overwrites but can't delete — an attr removed from
+      // <html> (toggleAttribute off, classList emptied) would linger on
+      // the host and :host([data-*]) / :host(.foo) rules would keep
+      // matching. Remove stale mirrored attrs first; iterate backward
+      // because removeAttribute mutates the live NamedNodeMap.
+      for (let i = host.attributes.length - 1; i >= 0; i--) {
+        const n = host.attributes[i].name;
+        if ((n.startsWith('data-') || n === 'class' || n === 'lang')
+            && !de.hasAttribute(n)) {
+          host.removeAttribute(n);
+        }
+      }
+      for (const a of de.attributes) {
+        if (a.name.startsWith('data-') || a.name === 'class' || a.name === 'lang') {
+          host.setAttribute(a.name, a.value);
+        }
+      }
+      // The :root→:host rewrite in _snapshotAuthorCss pins each custom
+      // property to its stylesheet default on the thumb host, shadowing
+      // the live value that would otherwise inherit. Tweaks can write the
+      // live value on any ancestor — <html>, <body>, a wrapper div, the
+      // deck-stage element — so read it as the *computed* value at
+      // <deck-stage> (which sees the whole inheritance chain) rather than
+      // trying to guess which element the author wrote to. Inline on the
+      // host beats the :host{} rule. remove-stale covers vars dropped
+      // from the stylesheet between snapshots.
+      const vars = this._authorVars || new Set();
+      for (let i = host.style.length - 1; i >= 0; i--) {
+        const p = host.style[i];
+        if (p.startsWith('--') && !vars.has(p)) host.style.removeProperty(p);
+      }
+      const live = cs || getComputedStyle(this);
+      vars.forEach((p) => {
+        const v = live.getPropertyValue(p);
+        if (v) host.style.setProperty(p, v.trim());
+        else host.style.removeProperty(p);
+      });
+    }
+
+    disconnectedCallback() {
+      window.removeEventListener('keydown', this._onKey);
+      window.removeEventListener('resize', this._onResize);
+      window.removeEventListener('mousemove', this._onMouseMove);
+      window.removeEventListener('message', this._onMessage);
+      window.removeEventListener('click', this._onDocClick, true);
+      if (this._hideTimer) clearTimeout(this._hideTimer);
+      if (this._mouseIdleTimer) clearTimeout(this._mouseIdleTimer);
+      if (this._liveTimer) clearTimeout(this._liveTimer);
+      if (this._tweakTimer) clearTimeout(this._tweakTimer);
+      if (this._railAnimTimer) clearTimeout(this._railAnimTimer);
+      if (this._scaleRaf) cancelAnimationFrame(this._scaleRaf);
+      if (this._liveObserver) this._liveObserver.disconnect();
+      if (this._railObserver) this._railObserver.disconnect();
+      if (this._onTweakChange) window.removeEventListener('tweakchange', this._onTweakChange);
+    }
+
+    attributeChangedCallback() {
+      if (this._canvas) {
+        this._canvas.style.width = this.designWidth + 'px';
+        this._canvas.style.height = this.designHeight + 'px';
+        this._canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
+        this._canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+        if (this._rail) {
+          this._rail.style.setProperty('--deck-aspect', this.designWidth + '/' + this.designHeight);
+        }
+        this._fit();
+        this._scaleThumbs();
+        this._syncPrintPageRule();
+      }
+    }
+
+    _render() {
+      const style = document.createElement('style');
+      style.textContent = stylesheet;
+
+      const stage = document.createElement('div');
+      stage.className = 'stage';
+
+      const canvas = document.createElement('div');
+      canvas.className = 'canvas';
+      canvas.style.width = this.designWidth + 'px';
+      canvas.style.height = this.designHeight + 'px';
+      canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
+      canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+
+      const slot = document.createElement('slot');
+      slot.addEventListener('slotchange', this._onSlotChange);
+      canvas.appendChild(slot);
+      stage.appendChild(canvas);
+
+      // Tap zones (mobile): left third = back, right third = forward.
+      const tapzones = document.createElement('div');
+      tapzones.className = 'tapzones export-hidden';
+      tapzones.setAttribute('aria-hidden', 'true');
+      tapzones.setAttribute('data-noncommentable', '');
+      const tzBack = document.createElement('div');
+      tzBack.className = 'tapzone tapzone--back';
+      const tzMid = document.createElement('div');
+      tzMid.className = 'tapzone tapzone--mid';
+      tzMid.style.pointerEvents = 'none';
+      const tzFwd = document.createElement('div');
+      tzFwd.className = 'tapzone tapzone--fwd';
+      tzBack.addEventListener('click', this._onTapBack);
+      tzFwd.addEventListener('click', this._onTapForward);
+      tapzones.append(tzBack, tzMid, tzFwd);
+
+      // Overlay: compact, solid black, with clickable controls.
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay export-hidden';
+      overlay.setAttribute('role', 'toolbar');
+      overlay.setAttribute('aria-label', 'Deck controls');
+      overlay.setAttribute('data-noncommentable', '');
+      overlay.innerHTML = `
+        <button class="btn prev" type="button" aria-label="Previous slide" title="Previous (←)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
+        </button>
+        <span class="count" aria-live="polite"><span class="current">1</span><span class="sep">/</span><span class="total">1</span></span>
+        <button class="btn next" type="button" aria-label="Next slide" title="Next (→)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+        <span class="divider"></span>
+        <button class="btn reset" type="button" aria-label="Reset to first slide" title="Reset (R)">Reset<span class="kbd">R</span></button>
+      `;
+
+      overlay.querySelector('.prev').addEventListener('click', () => this._advance(-1, 'click'));
+      overlay.querySelector('.next').addEventListener('click', () => this._advance(1, 'click'));
+      overlay.querySelector('.reset').addEventListener('click', () => this._go(0, 'click'));
+
+      // Thumbnail rail + context menu. Thumbnails are populated in
+      // _renderRail() after _collectSlides().
+      const rail = document.createElement('div');
+      rail.className = 'rail export-hidden';
+      rail.setAttribute('data-noncommentable', '');
+      rail.style.setProperty('--deck-aspect', this.designWidth + '/' + this.designHeight);
+      // Edge auto-scroll while dragging a thumb near the rail's top/bottom
+      // so off-screen drop targets are reachable. Native dragover fires
+      // continuously while the pointer is stationary, so a per-event nudge
+      // (ramped by edge proximity) is enough — no rAF loop needed.
+      rail.addEventListener('dragover', (e) => {
+        if (this._dragFrom == null) return;
+        const r = rail.getBoundingClientRect();
+        const EDGE = 40;
+        const dt = e.clientY - r.top;
+        const db = r.bottom - e.clientY;
+        if (dt < EDGE) rail.scrollTop -= Math.ceil((EDGE - dt) / 3);
+        else if (db < EDGE) rail.scrollTop += Math.ceil((EDGE - db) / 3);
+      });
+
+      const menu = document.createElement('div');
+      menu.className = 'ctxmenu export-hidden';
+      menu.setAttribute('data-noncommentable', '');
+      menu.innerHTML = `
+        <button type="button" data-act="skip">Skip slide</button>
+        <button type="button" data-act="up">Move up</button>
+        <button type="button" data-act="down">Move down</button>
+        <hr>
+        <button type="button" data-act="delete">Delete slide</button>
+      `;
+      menu.addEventListener('click', (e) => {
+        const act = e.target && e.target.getAttribute && e.target.getAttribute('data-act');
+        if (!act) return;
+        const i = this._menuIndex;
+        this._closeMenu();
+        if (act === 'skip') this._toggleSkip(i);
+        else if (act === 'up') this._moveSlide(i, i - 1);
+        else if (act === 'down') this._moveSlide(i, i + 1);
+        else if (act === 'delete') this._openConfirm(i);
+      });
+      menu.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      // Rail resize handle — drag to set --deck-rail-w, persisted to
+      // localStorage so the width survives reloads.
+      const resize = document.createElement('div');
+      resize.className = 'rail-resize export-hidden';
+      resize.setAttribute('data-noncommentable', '');
+      resize.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        resize.setPointerCapture(e.pointerId);
+        resize.setAttribute('data-dragging', '');
+        const move = (ev) => this._setRailWidth(ev.clientX);
+        const up = () => {
+          resize.removeEventListener('pointermove', move);
+          resize.removeEventListener('pointerup', up);
+          resize.removeEventListener('pointercancel', up);
+          resize.removeAttribute('data-dragging');
+          try { localStorage.setItem('deck-stage.railWidth', String(this._railPx)); } catch (err) {}
+        };
+        resize.addEventListener('pointermove', move);
+        resize.addEventListener('pointerup', up);
+        resize.addEventListener('pointercancel', up);
+      });
+
+      // Delete-confirm dialog — mirrors the SPA's ConfirmDialog layout.
+      const confirm = document.createElement('div');
+      confirm.className = 'confirm-backdrop export-hidden';
+      confirm.setAttribute('data-noncommentable', '');
+      confirm.innerHTML = `
+        <div class="confirm" role="dialog" aria-modal="true">
+          <div class="body">
+            <div class="title">Delete slide?</div>
+            <div class="msg">This slide will be removed from the deck.</div>
+          </div>
+          <div class="footer">
+            <button type="button" class="cancel">Cancel</button>
+            <button type="button" class="danger">Delete</button>
+          </div>
+        </div>
+      `;
+      confirm.addEventListener('click', (e) => {
+        if (e.target === confirm) this._closeConfirm();
+      });
+      confirm.querySelector('.cancel').addEventListener('click', () => this._closeConfirm());
+      confirm.querySelector('.danger').addEventListener('click', () => {
+        const i = this._confirmIndex;
+        this._closeConfirm();
+        this._deleteSlide(i);
+      });
+
+      this._root.append(style, rail, resize, stage, tapzones, overlay, menu, confirm);
+      this._canvas = canvas;
+      this._slot = slot;
+      this._overlay = overlay;
+      this._tapzones = tapzones;
+      this._rail = rail;
+      this._resize = resize;
+      this._menu = menu;
+      this._confirm = confirm;
+      this._countEl = overlay.querySelector('.current');
+      this._totalEl = overlay.querySelector('.total');
+
+      // Restore persisted rail width.
+      let rw = 188;
+      try {
+        const s = localStorage.getItem('deck-stage.railWidth');
+        if (s) rw = parseInt(s, 10) || rw;
+      } catch (err) {}
+      this._setRailWidth(rw);
+      this._syncRailHidden();
+    }
+
+    _setRailWidth(px) {
+      const w = Math.max(120, Math.min(360, Math.round(px)));
+      this._railPx = w;
+      this.style.setProperty('--deck-rail-w', w + 'px');
+      this._fit();
+      // _scaleThumbs forces a sync layout (frame.offsetWidth) then writes
+      // N transforms. During a resize drag this runs per-pointermove;
+      // coalesce to one per frame.
+      if (!this._scaleRaf) {
+        this._scaleRaf = requestAnimationFrame(() => {
+          this._scaleRaf = null;
+          this._scaleThumbs();
+        });
+      }
+    }
+
+    /** @page must live in the document stylesheet — it's a no-op inside
+     *  shadow DOM. Inject/update a single <head> style tag so the print
+     *  sheet matches the design size and Save-as-PDF yields one slide per
+     *  page with no margins. */
+    _syncPrintPageRule() {
+      const id = 'deck-stage-print-page';
+      let tag = document.getElementById(id);
+      if (!tag) {
+        tag = document.createElement('style');
+        tag.id = id;
+        document.head.appendChild(tag);
+      }
+      tag.textContent =
+        '@page { size: ' + this.designWidth + 'px ' + this.designHeight + 'px; margin: 0; } ' +
+        '@media print { html, body { margin: 0 !important; padding: 0 !important; background: none !important; overflow: visible !important; height: auto !important; } ' +
+        '* { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
+    }
+
+    _onSlotChange() {
+      // Rail mutations (delete/move) already reconcile synchronously and
+      // emit slidechange with reason 'api'; skip the async slotchange that
+      // would otherwise re-broadcast with reason 'init'.
+      if (this._squelchSlotChange) { this._squelchSlotChange = false; return; }
+      this._collectSlides();
+      this._restoreIndex();
+      this._applyIndex({ showOverlay: false, broadcast: true, reason: 'init' });
+      this._fit();
+    }
+
+    _collectSlides() {
+      const assigned = this._slot.assignedElements({ flatten: true });
+      this._slides = assigned.filter((el) => {
+        // Skip template/style/script nodes even if someone slots them.
+        const tag = el.tagName;
+        return tag !== 'TEMPLATE' && tag !== 'SCRIPT' && tag !== 'STYLE';
+      });
+      this._slideSet = new Set(this._slides);
+
+      this._slides.forEach((slide, i) => {
+        const n = i + 1;
+        // Determine a label for comment flow: prefer explicit data-label,
+        // then an existing data-screen-label, then first heading, else "Slide".
+        let label = slide.getAttribute('data-label');
+        if (!label) {
+          const existing = slide.getAttribute('data-screen-label');
+          if (existing) {
+            // Strip any leading number the author may have included.
+            label = existing.replace(/^\s*\d+\s*/, '').trim() || existing;
+          }
+        }
+        if (!label) {
+          const h = slide.querySelector('h1, h2, h3, [data-title]');
+          if (h) label = (h.textContent || '').trim().slice(0, 40);
+        }
+        if (!label) label = 'Slide';
+        slide.setAttribute('data-screen-label', `${pad2(n)} ${label}`);
+
+        // Validation attribute for comment flow / auto-checks.
+        if (!slide.hasAttribute('data-om-validate')) {
+          slide.setAttribute('data-om-validate', VALIDATE_ATTR);
+        }
+
+        slide.setAttribute('data-deck-slide', String(i));
+      });
+
+      if (this._totalEl) this._totalEl.textContent = String(this._slides.length || 1);
+      if (this._index >= this._slides.length) this._index = Math.max(0, this._slides.length - 1);
+      this._markLastVisible();
+      this._renderRail();
+    }
+
+    /** Tag the last non-skipped slide so print CSS can drop its
+     *  break-after (see the @media print comment above — :last-child
+     *  alone matches a hidden skipped slide). */
+    _markLastVisible() {
+      let last = null;
+      this._slides.forEach((s) => {
+        s.removeAttribute('data-deck-last-visible');
+        if (!s.hasAttribute('data-deck-skip')) last = s;
+      });
+      if (last) last.setAttribute('data-deck-last-visible', '');
+    }
+
+    _loadNotes() {
+      const tag = document.getElementById('speaker-notes');
+      if (!tag) { this._notes = []; return; }
+      try {
+        const parsed = JSON.parse(tag.textContent || '[]');
+        if (Array.isArray(parsed)) this._notes = parsed;
+      } catch (e) {
+        console.warn('[deck-stage] Failed to parse #speaker-notes JSON:', e);
+        this._notes = [];
+      }
+    }
+
+    _restoreIndex() {
+      // The host's ?slide= param is delivered as a #<int> hash (1-indexed) on
+      // the iframe src. No hash → slide 1; the deck itself keeps no position
+      // state across loads.
+      const h = (location.hash || '').match(/^#(\d+)$/);
+      if (h) {
+        const n = parseInt(h[1], 10) - 1;
+        if (n >= 0 && n < this._slides.length) this._index = n;
+      }
+    }
+
+    _applyIndex({ showOverlay = true, broadcast = true, reason = 'init' } = {}) {
+      if (!this._slides.length) return;
+      const prev = this._prevIndex == null ? -1 : this._prevIndex;
+      const curr = this._index;
+      // Keep the iframe's own hash in sync so an in-iframe location.reload()
+      // (reload banner path in viewer-handle.ts) lands on the current slide,
+      // not the stale deep-link hash from initial load.
+      try { history.replaceState(null, '', '#' + (curr + 1)); } catch (e) {}
+      this._slides.forEach((s, i) => {
+        if (i === curr) s.setAttribute('data-deck-active', '');
+        else s.removeAttribute('data-deck-active');
+      });
+      if (this._countEl) this._countEl.textContent = String(curr + 1);
+      // Follow-scroll on every navigation (init deep-link, keyboard, click,
+      // tap, external goTo) — the only time we *don't* want the rail to
+      // track current is after a rail-internal mutation, where _renderRail
+      // has already restored the user's scroll position and yanking back to
+      // current would undo it.
+      this._syncRail(reason !== 'mutation');
+
+      if (broadcast) {
+        // (1) Legacy: host-window postMessage for speaker-notes renderers.
+        try { window.postMessage({ slideIndexChanged: curr, deckTotal: this._slides.length, deckSkipped: this._skippedIndices() }, '*'); } catch (e) {}
+
+        // (2) In-page CustomEvent on the <deck-stage> element itself.
+        //     Bubbles and composes out of shadow DOM so slide code can listen:
+        //       document.querySelector('deck-stage').addEventListener('slidechange', e => {
+        //         e.detail.index, e.detail.previousIndex, e.detail.total, e.detail.slide, e.detail.reason
+        //       });
+        const detail = {
+          index: curr,
+          previousIndex: prev,
+          total: this._slides.length,
+          slide: this._slides[curr] || null,
+          previousSlide: prev >= 0 ? (this._slides[prev] || null) : null,
+          reason: reason, // 'init' | 'keyboard' | 'click' | 'tap' | 'api'
+        };
+        this.dispatchEvent(new CustomEvent('slidechange', {
+          detail,
+          bubbles: true,
+          composed: true,
+        }));
+      }
+
+      this._prevIndex = curr;
+      if (showOverlay) this._flashOverlay();
+    }
+
+    _flashOverlay() {
+      // Host posts __omelette_presenting while in fullscreen/tab presentation
+      // mode — suppress the nav footer entirely (both hover and slide-change
+      // flash) so the audience sees clean slides.
+      if (!this._overlay || this._presenting) return;
+      this._overlay.setAttribute('data-visible', '');
+      if (this._hideTimer) clearTimeout(this._hideTimer);
+      this._hideTimer = setTimeout(() => {
+        this._overlay.removeAttribute('data-visible');
+      }, OVERLAY_HIDE_MS);
+    }
+
+    _railWidth() {
+      // State-based, no offsetWidth: the first _fit() can run before the
+      // rail has had layout on some load paths, and a 0 there paints the
+      // slide full-width for one frame before the post-slotchange _fit()
+      // corrects it.
+      if (!this._railEnabled || !this._railVisible || this.hasAttribute('no-rail')
+          || this.hasAttribute('noscale') || this._presenting) return 0;
+      return this._railPx || 0;
+    }
+
+    _fit() {
+      if (!this._canvas) return;
+      const stage = this._canvas.parentElement;
+      // PPTX export sets noscale so the DOM capture sees authored-size
+      // geometry — the scaled canvas is in shadow DOM, so the exporter's
+      // resetTransformSelector can't reach .canvas.style.transform directly.
+      if (this.hasAttribute('noscale')) {
+        this._canvas.style.transform = 'none';
+        if (stage) stage.style.left = '0';
+        if (this._overlay) this._overlay.style.marginLeft = '0';
+        if (this._tapzones) this._tapzones.style.left = '0';
+        return;
+      }
+      const rw = this._railWidth();
+      if (stage) stage.style.left = rw + 'px';
+      // Overlay is centred on the viewport via left:50% + translate(-50%);
+      // marginLeft shifts the centre by rw/2 so it lands in the middle of
+      // the [rw, innerWidth] stage region. Tapzones just inset from rw.
+      if (this._overlay) this._overlay.style.marginLeft = (rw / 2) + 'px';
+      if (this._tapzones) this._tapzones.style.left = rw + 'px';
+      const vw = window.innerWidth - rw;
+      const vh = window.innerHeight;
+      const s = Math.min(vw / this.designWidth, vh / this.designHeight);
+      this._canvas.style.transform = `scale(${s})`;
+    }
+
+    _onResize() { this._fit(); }
+
+    _onMouseMove() {
+      // Keep overlay visible while mouse moves; hide after idle.
+      this._flashOverlay();
+    }
+
+    _onMessage(e) {
+      const d = e.data;
+      if (d && typeof d.__omelette_presenting === 'boolean') {
+        this._presenting = d.__omelette_presenting;
+        if (this._presenting && this._overlay) {
+          this._overlay.removeAttribute('data-visible');
+          if (this._hideTimer) clearTimeout(this._hideTimer);
+        }
+        this._syncRailHidden();
+        this._closeMenu();
+        this._closeConfirm();
+        this._fit();
+        this._scaleThumbs();
+      }
+      // Per-viewer show/hide, driven by the TweaksPanel's auto-injected
+      // "Thumbnail rail" toggle (or any author script). Independent of
+      // whether the Tweaks panel itself is open — closing the panel
+      // doesn't change rail visibility. Persists alongside rail width.
+      if (d && d.type === '__deck_rail_visible' && typeof d.on === 'boolean') {
+        if (d.on === this._railVisible) return;
+        this._railVisible = d.on;
+        try { localStorage.setItem('deck-stage.railVisible', d.on ? '1' : '0'); } catch (e) {}
+        // Arm the transition, commit it, then flip state — otherwise the
+        // browser coalesces both writes and nothing animates on show.
+        this.setAttribute('data-rail-anim', '');
+        void (this._rail && this._rail.offsetHeight);
+        this._syncRailHidden();
+        this._fit();
+        this._scaleThumbs();
+        clearTimeout(this._railAnimTimer);
+        this._railAnimTimer = setTimeout(() => this.removeAttribute('data-rail-anim'), 220);
+      }
+      if (d && d.type === '__omelette_rail_enabled') this._enableRail();
+    }
+
+    _syncRailHidden() {
+      if (!this._rail) return;
+      // data-presenting is the hard hide (display:none) for flag-off and
+      // presentation mode — instant, no transition. data-user-hidden is
+      // the soft hide (translateX(-100%)) for the viewer's rail toggle,
+      // so show/hide slides under :host([data-rail-anim]).
+      const hard = !this._railEnabled || this._presenting;
+      if (hard) this._rail.setAttribute('data-presenting', '');
+      else this._rail.removeAttribute('data-presenting');
+      if (!this._railVisible) this._rail.setAttribute('data-user-hidden', '');
+      else this._rail.removeAttribute('data-user-hidden');
+      // translateX hide leaves thumbs (tabIndex=0) in the tab order —
+      // inert keeps them unfocusable while the rail is off-screen.
+      this._rail.inert = hard || !this._railVisible;
+    }
+
+    _onTapBack(e) {
+      e.preventDefault();
+      this._advance(-1, 'tap');
+    }
+
+    _onTapForward(e) {
+      e.preventDefault();
+      this._advance(1, 'tap');
+    }
+
+    _onKey(e) {
+      // Ignore when the user is typing.
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      // Confirm dialog swallows nav keys while open; Escape cancels. Enter
+      // is left to the focused button's native activation so Tab→Cancel
+      // →Enter activates Cancel, not the window-level confirm path.
+      if (this._confirm && this._confirm.hasAttribute('data-open')) {
+        if (e.key === 'Escape') { this._closeConfirm(); e.preventDefault(); }
+        return;
+      }
+      if (e.key === 'Escape' && this._menu && this._menu.hasAttribute('data-open')) {
+        this._closeMenu();
+        e.preventDefault();
+        return;
+      }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const key = e.key;
+      let handled = true;
+
+      if (key === 'ArrowRight' || key === 'PageDown' || key === ' ' || key === 'Spacebar') {
+        this._advance(1, 'keyboard');
+      } else if (key === 'ArrowLeft' || key === 'PageUp') {
+        this._advance(-1, 'keyboard');
+      } else if (key === 'Home') {
+        this._go(0, 'keyboard');
+      } else if (key === 'End') {
+        this._go(this._slides.length - 1, 'keyboard');
+      } else if (key === 'r' || key === 'R') {
+        this._go(0, 'keyboard');
+      } else if (/^[0-9]$/.test(key)) {
+        // 1..9 jump to that slide; 0 jumps to 10.
+        const n = key === '0' ? 9 : parseInt(key, 10) - 1;
+        if (n < this._slides.length) this._go(n, 'keyboard');
+      } else {
+        handled = false;
+      }
+
+      if (handled) {
+        e.preventDefault();
+        this._flashOverlay();
+      }
+    }
+
+    _go(i, reason = 'api') {
+      if (!this._slides.length) return;
+      const clamped = Math.max(0, Math.min(this._slides.length - 1, i));
+      if (clamped === this._index) {
+        this._flashOverlay();
+        return;
+      }
+      this._index = clamped;
+      this._applyIndex({ showOverlay: true, broadcast: true, reason });
+    }
+
+    /** Step forward/back skipping any slide marked data-deck-skip. Falls
+     *  back to _go's clamp-at-ends behaviour (flash overlay) when there's
+     *  nothing further in that direction. */
+    _advance(dir, reason) {
+      if (!this._slides.length) return;
+      let i = this._index + dir;
+      while (i >= 0 && i < this._slides.length && this._slides[i].hasAttribute('data-deck-skip')) {
+        i += dir;
+      }
+      if (i < 0 || i >= this._slides.length) { this._flashOverlay(); return; }
+      this._go(i, reason);
+    }
+
+    // ── Thumbnail rail ────────────────────────────────────────────────────
+    //
+    // Thumbs are keyed by slide element and reused across _renderRail()
+    // calls, so a reorder/delete is an O(changed) DOM shuffle instead of an
+    // O(N) teardown-and-re-clone. Each thumb starts as a lightweight shell
+    // (num + empty frame); the clone is materialized lazily by an
+    // IntersectionObserver when the frame scrolls into (or near) view, so
+    // only visible-ish slides pay the clone + image-decode cost.
+
+    _renderRail() {
+      if (!this._rail || !this._railEnabled) { this._thumbs = []; return; }
+      // FLIP: record each *materialized* thumb's top before the reconcile.
+      // Off-screen (non-materialized) thumbs don't need the animation and
+      // skipping their getBoundingClientRect saves a forced layout per
+      // off-screen thumb on large decks.
+      const prevTops = new Map();
+      (this._thumbs || []).forEach(({ thumb, slide, host }) => {
+        if (host) prevTops.set(slide, thumb.getBoundingClientRect().top);
+      });
+      const st = this._rail.scrollTop;
+
+      // Reconcile: reuse thumbs that already exist for a slide, create
+      // shells for new slides, drop thumbs for removed slides.
+      const bySlide = new Map();
+      (this._thumbs || []).forEach((t) => bySlide.set(t.slide, t));
+      const next = [];
+      this._slides.forEach((slide) => {
+        let t = bySlide.get(slide);
+        if (t) bySlide.delete(slide);
+        else t = this._makeThumb(slide);
+        next.push(t);
+      });
+      // Orphans — slides removed since last render.
+      bySlide.forEach((t) => {
+        if (this._railObserver) this._railObserver.unobserve(t.frame);
+        t.thumb.remove();
+      });
+      // Put thumbs into document order to match _slides. insertBefore on
+      // an already-correctly-placed node is a no-op, so this is cheap
+      // when nothing moved.
+      next.forEach((t, i) => {
+        const want = t.thumb;
+        const at = this._rail.children[i];
+        if (at !== want) this._rail.insertBefore(want, at || null);
+        t.i = i;
+        t.num.textContent = String(i + 1);
+        if (t.slide.hasAttribute('data-deck-skip')) t.thumb.setAttribute('data-skip', '');
+        else t.thumb.removeAttribute('data-skip');
+      });
+      this._thumbs = next;
+
+      this._rail.scrollTop = st;
+      if (prevTops.size) {
+        const moved = [];
+        this._thumbs.forEach(({ thumb, slide }) => {
+          const old = prevTops.get(slide);
+          if (old == null) return;
+          const dy = old - thumb.getBoundingClientRect().top;
+          if (Math.abs(dy) < 1) return;
+          thumb.style.transition = 'none';
+          thumb.style.transform = `translateY(${dy}px)`;
+          moved.push(thumb);
+        });
+        if (moved.length) {
+          // Commit the inverted positions before flipping the transition
+          // on — otherwise the browser coalesces both style writes and
+          // nothing animates.
+          void this._rail.offsetHeight;
+          moved.forEach((t) => {
+            t.style.transition = 'transform 180ms cubic-bezier(.2,.7,.3,1)';
+            t.style.transform = '';
+          });
+          setTimeout(() => moved.forEach((t) => { t.style.transition = ''; }), 220);
+        }
+      }
+      requestAnimationFrame(() => this._scaleThumbs());
+      this._syncRail(false);
+    }
+
+    /** Create a lightweight thumb shell for one slide. The clone is
+     *  materialized later by the IntersectionObserver. Event handlers
+     *  look up the thumb's *current* index (via _thumbs.indexOf) so the
+     *  same element can be reused across reorders. */
+    _makeThumb(slide) {
+      const thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      thumb.tabIndex = 0;
+      const num = document.createElement('div');
+      num.className = 'num';
+      const frame = document.createElement('div');
+      frame.className = 'frame';
+      thumb.append(num, frame);
+
+      const entry = { thumb, num, frame, slide, clone: null, host: null, i: -1 };
+      // entry.i is refreshed on every _renderRail reconcile pass, so
+      // handlers read the thumb's current position without an O(N) scan.
+      const idx = () => entry.i;
+
+      thumb.addEventListener('click', () => this._go(idx(), 'click'));
+      // ↑/↓ step through the rail when a thumb has focus. _go clamps at the
+      // ends and _applyIndex→_syncRail scrolls the new current thumb into
+      // view; we move focus to it (preventScroll — _syncRail already
+      // scrolled) so a held key walks the whole list. stopPropagation keeps
+      // this out of the window-level _onKey nav handler.
+      thumb.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        e.preventDefault();
+        e.stopPropagation();
+        this._go(idx() + (e.key === 'ArrowDown' ? 1 : -1), 'keyboard');
+        const cur = this._thumbs && this._thumbs[this._index];
+        if (cur) cur.thumb.focus({ preventScroll: true });
+      });
+      thumb.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        this._openMenu(idx(), e.clientX, e.clientY);
+      });
+      thumb.draggable = true;
+      thumb.addEventListener('dragstart', (e) => {
+        this._dragFrom = idx();
+        thumb.setAttribute('data-dragging', '');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', String(this._dragFrom)); } catch (err) {}
+      });
+      thumb.addEventListener('dragend', () => {
+        thumb.removeAttribute('data-dragging');
+        this._clearDrop();
+        this._dragFrom = null;
+      });
+      thumb.addEventListener('dragover', (e) => {
+        if (this._dragFrom == null) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const r = thumb.getBoundingClientRect();
+        this._setDrop(idx(), e.clientY < r.top + r.height / 2 ? 'before' : 'after');
+      });
+      thumb.addEventListener('drop', (e) => {
+        if (this._dragFrom == null) return;
+        e.preventDefault();
+        const i = idx();
+        const r = thumb.getBoundingClientRect();
+        let to = e.clientY >= r.top + r.height / 2 ? i + 1 : i;
+        if (this._dragFrom < to) to--;
+        const from = this._dragFrom;
+        this._clearDrop();
+        this._dragFrom = null;
+        if (to !== from) this._moveSlide(from, to);
+      });
+
+      if (this._railObserver) this._railObserver.observe(frame);
+      frame.__deckThumb = entry;
+      return entry;
+    }
+
+    /** Lazily build the clone for a thumb that has scrolled into view. */
+    _materialize(entry) {
+      if (entry.host) return;
+      const dw = this.designWidth, dh = this.designHeight;
+      let clone = entry.slide.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.removeAttribute('data-deck-active');
+      clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+      // Neuter heavy media; replace <video> with its poster so the box
+      // keeps a visual. <iframe>/<audio> become empty placeholders.
+      clone.querySelectorAll('iframe, audio, object, embed').forEach((el) => {
+        el.removeAttribute('src');
+        el.removeAttribute('srcdoc');
+        el.removeAttribute('data');
+        el.innerHTML = '';
+      });
+      clone.querySelectorAll('video').forEach((el) => {
+        if (!el.poster) { el.removeAttribute('src'); el.innerHTML = ''; return; }
+        const img = document.createElement('img');
+        img.src = el.poster;
+        img.alt = '';
+        img.style.cssText = el.style.cssText + ';object-fit:cover;width:100%;height:100%;';
+        img.className = el.className;
+        el.replaceWith(img);
+      });
+      // Images: defer decode and let the browser pick the smallest
+      // srcset candidate for the ~140px thumb. Same-URL clones reuse the
+      // slide's decoded bitmap (URL-keyed cache), so the remaining cost
+      // is paint/composite — lazy+async keeps that off the main thread.
+      clone.querySelectorAll('img').forEach((el) => {
+        el.loading = 'lazy';
+        el.decoding = 'async';
+        if (el.srcset) el.sizes = (this._railPx || 188) + 'px';
+      });
+      // Custom elements inside the slide would have their
+      // connectedCallback fire when the clone is appended. Replace them
+      // with inert boxes so a component-heavy deck doesn't run N copies
+      // of each component's mount logic in the rail. Children are
+      // preserved so layout-wrapper elements (<my-column><h2>…</h2>)
+      // still show their authored content; the querySelectorAll NodeList
+      // is static, so nested custom elements in the moved subtree are
+      // still visited on later iterations.
+      const neuter = (el) => {
+        const box = document.createElement('div');
+        box.style.cssText = (el.getAttribute('style') || '') +
+          ';background:rgba(0,0,0,0.06);border:1px dashed rgba(0,0,0,0.15);';
+        box.className = el.className;
+        // Preserve theming/i18n hooks so [data-*] / :lang() / [dir]
+        // descendant selectors still match the neutered root.
+        for (const a of el.attributes) {
+          const n = a.name;
+          if (n.startsWith('data-') || n.startsWith('aria-') ||
+              n === 'lang' || n === 'dir' || n === 'role' || n === 'title') {
+            box.setAttribute(n, a.value);
+          }
+        }
+        while (el.firstChild) box.appendChild(el.firstChild);
+        return box;
+      };
+      // querySelectorAll('*') returns descendants only — a custom-element
+      // slide root (<my-slide>…</my-slide>) would slip through and upgrade
+      // on append. Swap the root first.
+      if (clone.tagName.includes('-')) clone = neuter(clone);
+      clone.querySelectorAll('*').forEach((el) => {
+        if (el.tagName.includes('-')) el.replaceWith(neuter(el));
+      });
+      clone.style.cssText += ';position:absolute;top:0;left:0;transform-origin:0 0;' +
+        'pointer-events:none;width:' + dw + 'px;height:' + dh + 'px;' +
+        'box-sizing:border-box;overflow:hidden;visibility:visible;opacity:1;';
+      const host = document.createElement('div');
+      host.style.cssText = 'position:absolute;inset:0;';
+      this._syncThumbHostAttrs(host);
+      const sr = host.attachShadow({ mode: 'open' });
+      if (this._adoptedSheet) sr.adoptedStyleSheets = [this._adoptedSheet];
+      else {
+        const st = document.createElement('style');
+        st.textContent = this._authorCss || '';
+        sr.appendChild(st);
+      }
+      sr.appendChild(clone);
+      entry.frame.appendChild(host);
+      entry.host = host;
+      entry.clone = clone;
+      if (this._thumbScale) clone.style.transform = 'scale(' + this._thumbScale + ')';
+      // Once materialized the IO callback is a no-op early-return —
+      // unobserve so scroll doesn't keep firing it.
+      if (this._railObserver) this._railObserver.unobserve(entry.frame);
+    }
+
+    /** Re-clone a single thumb (live-update path). No-op if the thumb
+     *  hasn't been materialized yet — it'll pick up current content when
+     *  it scrolls into view. */
+    _refreshThumb(slide) {
+      const entry = (this._thumbs || []).find((t) => t.slide === slide);
+      if (!entry || !entry.host) return;
+      entry.host.remove();
+      entry.host = entry.clone = null;
+      this._materialize(entry);
+    }
+
+    _scaleThumbs() {
+      if (!this._thumbs || !this._thumbs.length) return;
+      // Every frame is the same width; if it reads 0 the rail is
+      // display:none (noscale / no-rail / presenting / print) — leave the
+      // clones as-is and re-run when the rail is revealed.
+      const fw = this._thumbs[0].frame.offsetWidth;
+      if (!fw) return;
+      this._thumbScale = fw / this.designWidth;
+      this._thumbs.forEach(({ clone }) => {
+        if (clone) clone.style.transform = 'scale(' + this._thumbScale + ')';
+      });
+    }
+
+    _setDrop(i, where) {
+      // dragover fires at pointer-event rate; touch only the previous
+      // and new target rather than sweeping all N thumbs.
+      const t = this._thumbs && this._thumbs[i];
+      if (this._dropOn && this._dropOn !== t) {
+        this._dropOn.thumb.removeAttribute('data-drop');
+      }
+      if (t) t.thumb.setAttribute('data-drop', where);
+      this._dropOn = t || null;
+    }
+
+    _clearDrop() {
+      if (this._dropOn) this._dropOn.thumb.removeAttribute('data-drop');
+      this._dropOn = null;
+    }
+
+    _syncRail(follow) {
+      if (!this._thumbs) return;
+      this._thumbs.forEach(({ thumb }, i) => {
+        if (i === this._index) {
+          thumb.setAttribute('data-current', '');
+          if (follow && typeof thumb.scrollIntoView === 'function') {
+            thumb.scrollIntoView({ block: 'nearest' });
+          }
+        } else {
+          thumb.removeAttribute('data-current');
+        }
+      });
+    }
+
+    _openMenu(i, x, y) {
+      if (!this._menu) return;
+      this._menuIndex = i;
+      const slide = this._slides[i];
+      const skip = slide && slide.hasAttribute('data-deck-skip');
+      this._menu.querySelector('[data-act="skip"]').textContent = skip ? 'Unskip slide' : 'Skip slide';
+      this._menu.querySelector('[data-act="up"]').disabled = i <= 0;
+      this._menu.querySelector('[data-act="down"]').disabled = i >= this._slides.length - 1;
+      this._menu.querySelector('[data-act="delete"]').disabled = this._slides.length <= 1;
+      // Place, then clamp to viewport after it's measurable.
+      this._menu.style.left = x + 'px';
+      this._menu.style.top = y + 'px';
+      this._menu.setAttribute('data-open', '');
+      const r = this._menu.getBoundingClientRect();
+      const nx = Math.min(x, window.innerWidth - r.width - 4);
+      const ny = Math.min(y, window.innerHeight - r.height - 4);
+      this._menu.style.left = Math.max(4, nx) + 'px';
+      this._menu.style.top = Math.max(4, ny) + 'px';
+    }
+
+    _closeMenu() {
+      if (this._menu) this._menu.removeAttribute('data-open');
+      this._menuIndex = -1;
+    }
+
+    _openConfirm(i) {
+      if (!this._confirm) return;
+      this._confirmIndex = i;
+      this._confirm.querySelector('.title').textContent = 'Delete slide ' + (i + 1) + '?';
+      this._confirm.setAttribute('data-open', '');
+      const btn = this._confirm.querySelector('.danger');
+      if (btn && btn.focus) btn.focus();
+    }
+
+    _closeConfirm() {
+      if (this._confirm) this._confirm.removeAttribute('data-open');
+      this._confirmIndex = -1;
+    }
+
+    _emitDeckChange(detail) {
+      this.dispatchEvent(new CustomEvent('deckchange', {
+        detail, bubbles: true, composed: true,
+      }));
+    }
+
+    _deleteSlide(i) {
+      const slide = this._slides[i];
+      if (!slide || this._slides.length <= 1) return;
+      const wasCurrent = i === this._index;
+      if (i < this._index || (wasCurrent && i === this._slides.length - 1)) this._index--;
+      this._squelchSlotChange = true;
+      slide.remove();
+      this._emitDeckChange({ action: 'delete', from: i, slide });
+      this._collectSlides();
+      this._applyIndex({ showOverlay: true, broadcast: true, reason: 'mutation' });
+    }
+
+    _toggleSkip(i) {
+      const slide = this._slides[i];
+      if (!slide) return;
+      const on = !slide.hasAttribute('data-deck-skip');
+      if (on) slide.setAttribute('data-deck-skip', '');
+      else slide.removeAttribute('data-deck-skip');
+      if (this._thumbs && this._thumbs[i]) {
+        if (on) this._thumbs[i].thumb.setAttribute('data-skip', '');
+        else this._thumbs[i].thumb.removeAttribute('data-skip');
+      }
+      this._markLastVisible();
+      this._emitDeckChange({ action: on ? 'skip' : 'unskip', from: i, slide });
+      // Re-broadcast so the presenter popup's prev/next thumbnails re-pick
+      // the nearest non-skipped slide without waiting for a nav event.
+      try { window.postMessage({ slideIndexChanged: this._index, deckTotal: this._slides.length, deckSkipped: this._skippedIndices() }, '*'); } catch (e) {}
+    }
+
+    _skippedIndices() {
+      const out = [];
+      for (let i = 0; i < this._slides.length; i++) {
+        if (this._slides[i].hasAttribute('data-deck-skip')) out.push(i);
+      }
+      return out;
+    }
+
+    _moveSlide(i, j) {
+      if (j < 0 || j >= this._slides.length || j === i) return;
+      const slide = this._slides[i];
+      const ref = j < i ? this._slides[j] : this._slides[j].nextSibling;
+      // Track the active slide across the reorder so the same content
+      // stays on screen.
+      const cur = this._index;
+      if (cur === i) this._index = j;
+      else if (i < cur && j >= cur) this._index = cur - 1;
+      else if (i > cur && j <= cur) this._index = cur + 1;
+      this._squelchSlotChange = true;
+      this.insertBefore(slide, ref);
+      this._emitDeckChange({ action: 'move', from: i, to: j, slide });
+      this._collectSlides();
+      this._applyIndex({ showOverlay: false, broadcast: true, reason: 'mutation' });
+    }
+
+    // Public API ------------------------------------------------------------
+
+    /** Current slide index (0-based). */
+    get index() { return this._index; }
+    /** Total slide count. */
+    get length() { return this._slides.length; }
+    /** Programmatically navigate. */
+    goTo(i) { this._go(i, 'api'); }
+    next() { this._advance(1, 'api'); }
+    prev() { this._advance(-1, 'api'); }
+    reset() { this._go(0, 'api'); }
+  }
+
+  if (!customElements.get('deck-stage')) {
+    customElements.define('deck-stage', DeckStage);
+  }
+})();
+
+</script>
+<style>
+  :root{
+    --yellow:#ffc629;
+    --ink:#161616;
+    --paper:#ffffff;
+    --mute:#6b6b6b;
+  }
+  html,body{margin:0;background:#000;font-family:'Archivo',sans-serif;color:var(--ink);}
+  deck-stage{ --slide-bg: var(--yellow); }
+
+  /* ---------- SLIDE 1: COVER ---------- */
+  .cover{
+    position:relative;
+    width:100%; height:100%;
+    background:var(--yellow);
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:64px 96px 72px;
+    box-sizing:border-box;
+  }
+
+  /* honeycomb motif — original hex grid, decorative */
+  .hex-field{
+    position:absolute; inset:0; pointer-events:none;
+    opacity:.10;
+  }
+
+  /* top meta bar */
+  .meta{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'JetBrains Mono',monospace;
+    font-size:24px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink);
+    z-index:2;
+  }
+  .meta .dot{
+    display:inline-block; width:10px; height:10px; background:var(--ink);
+    border-radius:50%; margin-right:14px; vertical-align:middle;
+  }
+  .meta .right{ display:flex; gap:32px; align-items:center; }
+  .meta .pill{
+    border:1.5px solid var(--ink); padding:8px 16px; border-radius:999px;
+    background:var(--paper);
+  }
+
+  /* main editorial block */
+  .stack{
+    flex:1; display:flex; flex-direction:column; justify-content:center;
+    position:relative; z-index:2;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:26px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--ink);
+    display:flex; align-items:center; gap:18px;
+    margin-bottom:28px;
+  }
+  .eyebrow .bar{ flex:0 0 96px; height:2px; background:var(--ink); }
+
+  .title{
+    font-family:'Archivo Black', 'Archivo', sans-serif;
+    font-weight:900;
+    font-size:360px;
+    line-height:.82;
+    letter-spacing:-.045em;
+    margin:0;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+  .title .stroke{
+    -webkit-text-stroke: 4px var(--ink);
+    color: transparent;
+  }
+
+  .lede{
+    margin-top:32px;
+    font-family:'Archivo',sans-serif;
+    font-weight:600;
+    font-size:56px; line-height:1.1;
+    letter-spacing:-.015em;
+    color:var(--ink);
+  }
+
+  /* footer / byline */
+  .foot{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    z-index:2;
+  }
+  .byline{
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .byline .by{
+    font-family:'JetBrains Mono',monospace;
+    font-size:24px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--ink); opacity:.7;
+  }
+  .byline .name{
+    font-family:'Archivo',sans-serif; font-weight:800;
+    font-size:44px; letter-spacing:-.02em;
+    color:var(--ink);
+    line-height:1;
+    margin-top:8px;
+  }
+  .byline .role{
+    font-family:'Archivo',sans-serif; font-weight:500;
+    font-size:24px; color:var(--ink); opacity:.7;
+    margin-top:10px;
+  }
+
+  .idx{
+    font-family:'JetBrains Mono',monospace;
+    font-size:24px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--ink); text-align:right;
+  }
+  .idx .big{
+    display:block;
+    font-family:'Archivo Black', sans-serif;
+    font-size:96px; line-height:.9;
+    letter-spacing:-.04em;
+    color:var(--ink);
+    margin-top:6px;
+  }
+
+  /* corner stamp — sits above the byline, clear of the wordmark */
+  .stamp{
+    position:absolute;
+    right:96px; bottom:240px;
+    transform: rotate(8deg);
+    border:2.5px solid var(--ink);
+    border-radius:50%;
+    width:170px; height:170px;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center;
+    font-family:'Archivo',sans-serif; font-weight:800;
+    font-size:18px; letter-spacing:.08em; text-transform:uppercase;
+    line-height:1.15;
+    background:rgba(255,255,255,.55);
+    z-index:3;
+  }
+  .stamp span{display:block;}
+  .stamp .num{ font-family:'Archivo Black',sans-serif; font-size:38px; letter-spacing:-.02em; margin-top:2px;}
+
+  /* ---------- SLIDE 2: COMPANY OVERVIEW ---------- */
+  .s2{
+    position:relative;
+    width:100%; height:100%;
+    background:var(--paper);
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:56px 80px 56px;
+    box-sizing:border-box;
+    color:var(--ink);
+  }
+  .s2-head{
+    display:flex; justify-content:space-between; align-items:center;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:18px;
+    margin-bottom:28px;
+    gap:32px;
+  }
+  .s2-head .num{
+    font-family:'Archivo Black',sans-serif;
+    font-size:64px; line-height:.9; letter-spacing:-.04em;
+    flex:0 0 auto;
+  }
+  .s2-head .title{
+    font-family:'Archivo',sans-serif; font-weight:800;
+    font-size:54px; letter-spacing:-.02em;
+    white-space:nowrap;
+    line-height:1;
+  }
+  .s2-head .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:24px; letter-spacing:.18em; text-transform:uppercase;
+    padding:10px 18px; background:var(--yellow);
+    border-radius:999px;
+  }
+
+  .s2-body{
+    flex:1;
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap:48px;
+    min-height:0;
+  }
+
+  .eye{
+    font-family:'JetBrains Mono',monospace;
+    font-size:24px; letter-spacing:.24em; text-transform:uppercase;
+    color:var(--ink);
+    display:flex; align-items:center; gap:14px;
+    margin-bottom:14px;
+    width:fit-content;
+  }
+  .eye::before{
+    content:""; display:inline-block; width:36px; height:2px; background:var(--ink);
+  }
+
+  /* origin paragraphs */
+  .origin p{
+    font-family:'Archivo',sans-serif;
+    font-weight:500;
+    font-size:24px; line-height:1.42;
+    margin:0 0 16px 0;
+    letter-spacing:-.005em;
+    color:#1a1a1a;
+  }
+  .origin p:last-child{margin-bottom:0;}
+  .origin p b{font-weight:800;}
+
+  /* right column stacks */
+  .s2-right{
+    display:flex; flex-direction:column;
+    gap:20px;
+    min-height:0;
+  }
+
+  .mission{
+    background:var(--yellow);
+    padding:20px 26px 22px;
+    border-radius:4px;
+    position:relative;
+  }
+  .mission .quote{
+    font-family:'Archivo',sans-serif;
+    font-weight:700;
+    font-size:25px; line-height:1.28;
+    letter-spacing:-.015em;
+    color:var(--ink);
+    margin:0;
+  }
+  .mission .marks{
+    font-family:'Archivo Black',sans-serif;
+    font-size:120px; line-height:1;
+    position:absolute; bottom:-30px; right:18px;
+    color:var(--ink); opacity:.12;
+    pointer-events:none;
+    font-style:italic;
+  }
+
+  /* numbers table — stacked rows */
+  .numbers .rows{
+    border-top:1.5px solid var(--ink);
+  }
+  .numbers .row{
+    display:flex; flex-direction:column;
+    gap:2px;
+    padding:7px 0;
+    border-bottom:1px solid #d9d9d9;
+  }
+  .numbers .label{
+    font-family:'JetBrains Mono',monospace; font-weight:400;
+    font-size:18px; color:#5a5a5a;
+    letter-spacing:.14em; text-transform:uppercase;
+  }
+  .numbers .val{
+    font-family:'Archivo',sans-serif; font-weight:800;
+    font-size:26px; color:var(--ink);
+    letter-spacing:-.015em;
+    line-height:1.2;
+  }
+  .numbers .val em{
+    font-style:normal; font-weight:500;
+    color:#5a5a5a; font-size:24px;
+  }
+
+  /* key offerings strip */
+  .offer-strip{
+    margin-top:24px;
+  }
+  .offer-grid{
+    display:grid; grid-template-columns: repeat(3, 1fr);
+    gap:18px;
+  }
+  .offer{
+    background:var(--ink); color:var(--paper);
+    padding:20px 24px;
+    border-radius:4px;
+    position:relative;
+    overflow:hidden;
+  }
+  .offer .name{
+    font-family:'Archivo Black',sans-serif;
+    font-size:30px; letter-spacing:-.02em;
+    margin-bottom:8px;
+  }
+  .offer .desc{
+    font-family:'Archivo',sans-serif; font-weight:500;
+    font-size:24px; line-height:1.3; color:#e8e8e8;
+    letter-spacing:-.005em;
+  }
+  .offer .badge{
+    position:absolute; top:18px; right:20px;
+    width:14px; height:14px; background:var(--yellow);
+    border-radius:50%;
+  }
+
+  /* tiny number footer */
+  .s2-foot{
+    margin-top:18px;
+    display:flex; justify-content:space-between;
+    font-family:'JetBrains Mono',monospace;
+    font-size:20px; letter-spacing:.22em; text-transform:uppercase;
+    color:#7a7a7a;
+  }
+
+  /* ---------- SLIDE 3: MARKET OVERVIEW & COMPETITION ---------- */
+  .s3{
+    position:relative; width:100%; height:100%;
+    background:var(--paper);
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:56px 80px;
+    box-sizing:border-box; color:var(--ink);
+  }
+  .s3-head{
+    display:flex; align-items:center;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:18px; margin-bottom:26px;
+    gap:32px;
+  }
+  .s3-head .num{
+    font-family:'Archivo Black',sans-serif;
+    font-size:64px; line-height:.9; letter-spacing:-.04em;
+  }
+  .s3-head .title{
+    font-family:'Archivo',sans-serif; font-weight:800;
+    font-size:54px; letter-spacing:-.02em;
+    white-space:nowrap; line-height:1;
+  }
+
+  .s3-body{
+    flex:1; display:grid;
+    grid-template-columns: .85fr 1.15fr;
+    gap:48px;
+    min-height:0;
+  }
+
+  /* market stats */
+  .stat-grid{
+    display:grid; grid-template-columns: 1fr 1fr;
+    gap:12px;
+  }
+  .stat{
+    background:#f6f6f4;
+    border:1.5px solid #e3e3e0;
+    padding:18px 20px;
+    border-radius:4px;
+    display:flex; flex-direction:column;
+    gap:6px;
+  }
+  .stat.dark{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .stat.yellow{ background:var(--yellow); border-color:var(--ink); }
+  .stat .figure{
+    font-family:'Archivo Black',sans-serif;
+    font-size:54px; line-height:.95; letter-spacing:-.035em;
+  }
+  .stat .cap{
+    font-family:'Archivo',sans-serif; font-weight:500;
+    font-size:18px; line-height:1.3;
+    letter-spacing:-.005em;
+    color:#3a3a3a;
+  }
+  .stat.dark .cap{ color:#d1d1cf; }
+  .stat.yellow .cap{ color:var(--ink); }
+
+  .market-bullets{
+    margin-top:14px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .market-bullets li{
+    list-style:none;
+    font-family:'Archivo',sans-serif; font-weight:500;
+    font-size:22px; line-height:1.35;
+    color:#1a1a1a;
+    padding-left:20px;
+    position:relative;
+  }
+  .market-bullets li::before{
+    content:""; position:absolute; left:0; top:11px;
+    width:8px; height:8px; background:var(--ink);
+    border-radius:50%;
+  }
+
+  /* competitive table */
+  .comp-table{
+    display:flex; flex-direction:column;
+  }
+  .comp-head{
+    display:grid; grid-template-columns: 140px 200px 1fr;
+    gap:18px;
+    padding:8px 0 10px;
+    border-bottom:2px solid var(--ink);
+    font-family:'JetBrains Mono',monospace;
+    font-size:14px; letter-spacing:.16em; text-transform:uppercase;
+    color:#5a5a5a;
+  }
+  .comp-row{
+    display:grid; grid-template-columns: 140px 200px 1fr;
+    gap:18px; align-items:start;
+    padding:10px 0;
+    border-bottom:1px solid #e3e3e0;
+  }
+  .comp-row.bumble{
+    background:var(--yellow);
+    margin:0 -12px; padding:10px 12px;
+    border-radius:4px;
+    border-bottom:1px solid var(--yellow);
+  }
+  .comp-row .app{
+    font-family:'Archivo Black',sans-serif;
+    font-size:24px; letter-spacing:-.02em;
+    color:var(--ink);
+  }
+  .comp-row .pos{
+    font-family:'Archivo',sans-serif; font-weight:700;
+    font-size:18px; color:var(--ink);
+    letter-spacing:-.005em;
+    line-height:1.3;
+  }
+  .comp-row .diff{
+    font-family:'Archivo',sans-serif; font-weight:500;
+    font-size:18px; line-height:1.35; color:#2a2a2a;
+    letter-spacing:-.005em;
+  }
+
+  /* where bumble sits */
+  .where{
+    margin-top:22px;
+    background:var(--ink); color:var(--paper);
+    padding:22px 28px;
+    border-radius:4px;
+    display:flex; align-items:flex-start; gap:24px;
+    min-height:fit-content;
+  }
+  .where.signal{
+    min-height:160px;
+  }
+  .where .key{
+    flex:0 0 auto;
+    font-family:'JetBrains Mono',monospace;
+    font-size:18px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--yellow);
+    padding-top:4px;
+  }
+  .where .text{
+    font-family:'Archivo',sans-serif; font-weight:600;
+    font-size:24px; line-height:1.35;
+    letter-spacing:-.01em;
+    color:var(--paper);
+    flex:1;
+  }
+  .where .text b{ background:var(--yellow); color:var(--ink); padding:1px 8px; border-radius:3px;}
+
+  .s3-foot{
+    margin-top:14px;
+    display:flex; justify-content:flex-end;
+    font-family:'JetBrains Mono',monospace;
+    font-size:20px; letter-spacing:.22em; text-transform:uppercase;
+    color:#7a7a7a;
+  }
+</style>
+</head>
+<body>
+
+<deck-stage>
+
+  <!-- SLIDE 1 — COVER -->
+  <section data-screen-label="01 Cover">
+    <div class="cover">
+
+      <!-- honeycomb decorative motif -->
+      <svg class="hex-field" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <pattern id="hex" x="0" y="0" width="120" height="104" patternUnits="userSpaceOnUse">
+            <polygon points="60,4 116,36 116,100 60,132 4,100 4,36" fill="none" stroke="#161616" stroke-width="2"/>
+          </pattern>
+        </defs>
+        <rect width="1920" height="1080" fill="url(#hex)"/>
+      </svg>
+
+      <!-- editorial title block -->
+      <div class="stack">
+        <h1 class="title">Bumble</h1>
+        <p class="lede">Complete Product Teardown</p>
+      </div>
+
+      <!-- footer -->
+      <div class="foot">
+        <div class="byline">
+          <span class="by">By</span>
+          <span class="name">Akshat Somani</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SLIDE 2 — COMPANY OVERVIEW -->
+  <section data-screen-label="02 Company Overview">
+    <div class="s2">
+
+      <!-- header -->
+      <div class="s2-head">
+        <div style="display:flex; align-items:flex-end; gap:28px;">
+          <div class="num">02</div>
+          <div class="title">Company Overview</div>
+        </div>
+      </div>
+
+      <!-- two-column body -->
+      <div class="s2-body">
+
+        <!-- LEFT: THE ORIGIN -->
+        <div class="origin">
+          <div class="eye">The Origin</div>
+          <p>Whitney Wolfe Herd cofounded Tinder in 2012. Two years later, she left after a sexual harassment dispute that became public. That experience shaped everything about what she built next.</p>
+          <p>Bumble launched in 2014 with one rule: women message first. The match expires in 24 hours if they don't. It was a direct response to what Wolfe Herd had watched go wrong at Tinder, and it worked.</p>
+          <p>In February 2021, Bumble went public. Wolfe Herd became the youngest woman to take a company public in US history. The stock opened at $43, hit $84 within a week, and has since fallen to trade between $3.55 and $9.22.</p>
+        </div>
+
+        <!-- RIGHT: MISSION + NUMBERS -->
+        <div class="s2-right">
+
+          <div class="mission">
+            <div class="eye" style="margin-bottom:10px;">Mission</div>
+            <p class="quote">"To bring people closer to love, building the most trusted space to connect, rooted in respect and intention."</p>
+            <span class="marks">”</span>
+          </div>
+
+          <div class="numbers">
+            <div class="eye">The Numbers Now</div>
+            <div class="rows">
+              <div class="row"><span class="label">Peak paying users</span><span class="val">~4M+ <em>(2023)</em></span></div>
+              <div class="row"><span class="label">Paying users lost in Q2 2025</span><span class="val">209,000 <em>in a single quarter</em></span></div>
+              <div class="row"><span class="label">Annual revenue</span><span class="val">$1.03B <em>down 5.06% YoY</em></span></div>
+              <div class="row"><span class="label">Flagship app revenue</span><span class="val">Down 9% <em>year over year</em></span></div>
+              <div class="row"><span class="label">Stock range (52 weeks)</span><span class="val">$3.55 to $9.22 <em>down from $80 at IPO</em></span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- KEY OFFERINGS -->
+      <div class="offer-strip">
+        <div class="eye">Key Offerings</div>
+        <div class="offer-grid">
+          <div class="offer">
+            <span class="badge"></span>
+            <div class="name">Bumble Date</div>
+            <div class="desc">Female first dating. Women message within 24hrs or the match expires.</div>
+          </div>
+          <div class="offer">
+            <span class="badge"></span>
+            <div class="name">Bumble BFF</div>
+            <div class="desc">Platonic friend finding. Same mechanic, no romantic intent.</div>
+          </div>
+          <div class="offer">
+            <span class="badge"></span>
+            <div class="name">Badoo</div>
+            <div class="desc">Separate global app. Larger in Europe and South Asia.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="s2-foot">
+        <span>02 / 10</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SLIDE 3 — MARKET OVERVIEW & COMPETITION -->
+  <section data-screen-label="03 Market & Competition">
+    <div class="s3">
+
+      <!-- header -->
+      <div class="s3-head">
+        <div class="num">03</div>
+        <div class="title">Market Overview &amp; Competition</div>
+      </div>
+
+      <!-- two-column body -->
+      <div class="s3-body">
+
+        <!-- LEFT: THE MARKET -->
+        <div>
+          <div class="eye">The Market</div>
+          <ul class="market-bullets" style="margin-top:0;">
+            <li>Global dating app revenue crossed $6 billion in 2025, then slumped for the first time.</li>
+            <li>350 million people use dating apps worldwide.</li>
+            <li>Only 22.75 million of them pay for anything (6.5% conversion rate).</li>
+            <li>That means 93.5% of users generate zero direct revenue.</li>
+            <li>The category isn't growing anymore. It's consolidating and contracting.</li>
+          </ul>
+
+          <div class="where signal" style="margin-top:22px;">
+            <div class="key">The Signal</div>
+            <div class="text">350M users, $6B in revenue, and still declining. People try these apps. They just don't stay.</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: COMPETITIVE LANDSCAPE -->
+        <div>
+          <div class="eye">Competitive Landscape</div>
+          <div class="comp-table">
+            <div class="comp-head">
+              <span>App</span>
+              <span>Positioning</span>
+              <span>What makes it different</span>
+            </div>
+            <div class="comp-row">
+              <span class="app">Tinder</span>
+              <span class="pos">Volume, casual</span>
+              <span class="diff">Largest user base. Swipe first. Match Group owned.</span>
+            </div>
+            <div class="comp-row bumble">
+              <span class="app">Bumble</span>
+              <span class="pos">Female first, safer</span>
+              <span class="diff">Women message first. 24hr expiry rule.</span>
+            </div>
+            <div class="comp-row">
+              <span class="app">Hinge</span>
+              <span class="pos">Relationship focused</span>
+              <span class="diff">Designed to be deleted. Prompt based profiles.</span>
+            </div>
+            <div class="comp-row">
+              <span class="app">Badoo</span>
+              <span class="pos">Global, casual</span>
+              <span class="diff">Strong in Europe and South Asia. Bumble Inc. owned.</span>
+            </div>
+            <div class="comp-row">
+              <span class="app">Happn</span>
+              <span class="pos">Location based</span>
+              <span class="diff">Connects people who physically crossed paths.</span>
+            </div>
+            <div class="comp-row">
+              <span class="app">Grindr</span>
+              <span class="pos">LGBTQ+ focused</span>
+              <span class="diff">First and still dominant gay dating app.</span>
+            </div>
+            <div class="comp-row">
+              <span class="app">OkCupid</span>
+              <span class="pos">Personality first</span>
+              <span class="diff">Deep questionnaire matching. Values over looks.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- where bumble sits -->
+      <div class="where">
+        <div class="key">Where Bumble Sits</div>
+        <div class="text">Second largest in North America. Squeezed from both sides. <b>Hinge owns serious relationships, Tinder owns casual.</b> Bumble is caught in between.</div>
+      </div>
+
+      <div class="s3-foot">
+        <span>03 / 10</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 4 — BUSINESS MODEL
+       ============================================================ -->
+  <section data-screen-label="04 Business Model">
+    <div class="slide">
+
+      <div class="slide-head">
+        <div class="num">04</div>
+        <div class="title">Business Model</div>
+      </div>
+
+      <p class="intro"><b>Freemium.</b> Free to download, revenue from premium features. Total revenue in 2025: ~$1.03 billion. Of 350 million global users, 22.75 million pay. That's 6.5%. The other 93.5% generate nothing.</p>
+
+      <div class="s4-body">
+
+        <!-- LEFT: The Uncomfortable Math -->
+        <div class="s4-col-left">
+          <div class="eye">The Uncomfortable Math</div>
+
+          <div class="s4-math">
+            <div class="s4-math-rows">
+              <div class="s4-math-row"><span class="big">~$19.99</span><span>average spend per paying user / month</span></div>
+              <div class="s4-math-row"><span class="big">209,000</span><span>paying users lost in Q2 2025 alone</span></div>
+              <div class="s4-math-row"><span class="big">9%</span><span>projected revenue decline in FY25</span></div>
+            </div>
+          </div>
+
+          <div class="dark-callout">
+            <div class="k">Structural Problem</div>
+            <div class="t">Every premium feature helps you get more matches. <b>None help you get a date.</b> Bumble monetises the search, not the outcome. The moment you succeed, you stop paying.</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Revenue Streams -->
+        <div>
+          <div class="eye">How Bumble Makes Money</div>
+          <div class="s4-revenue">
+            <div class="s4-revenue-head">
+              <span>Revenue Stream</span>
+              <span>What It Is</span>
+              <span>How It Works</span>
+            </div>
+            <div class="s4-revenue-row">
+              <span class="name">Bumble Premium</span>
+              <span class="what">Core subscription</span>
+              <span class="how">Unlimited swipes, advanced filters, see who liked you.</span>
+            </div>
+            <div class="s4-revenue-row">
+              <span class="name">Spotlight</span>
+              <span class="what">Visibility boost</span>
+              <span class="how">Appear at the top of the match queue for 30 minutes.</span>
+            </div>
+            <div class="s4-revenue-row">
+              <span class="name">SuperSwipe</span>
+              <span class="what">Interest signal</span>
+              <span class="how">Notifies someone you're especially interested before they swipe.</span>
+            </div>
+            <div class="s4-revenue-row">
+              <span class="name">Extend</span>
+              <span class="what">Buy more time</span>
+              <span class="how">Extends the 24hr window before a match expires.</span>
+            </div>
+            <div class="s4-revenue-row">
+              <span class="name">Bumble Coins</span>
+              <span class="what">In app currency</span>
+              <span class="how">Used to buy Spotlight, SuperSwipe, and Extend.</span>
+            </div>
+            <div class="s4-revenue-row">
+              <span class="name">Advertising</span>
+              <span class="what">Promoted listings</span>
+              <span class="how">~3% of total revenue. Not a primary focus.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="slide-foot"><span>04 / 10</span></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 5 — THE BEEHIVE
+       ============================================================ -->
+  <section data-screen-label="05 The Beehive">
+    <div class="slide">
+
+      <div class="slide-head">
+        <div class="num">05</div>
+        <div class="title">The Beehive</div>
+        <div class="sub">Bumble's Scoring System</div>
+      </div>
+
+      <p class="s5-intro">Bumble's matching algorithm is called the <b>Beehive</b>, an ELO style scoring system borrowed from chess. Every user gets an invisible score. That score determines who sees your profile, how often, and in what position. You never see it. You just feel it.</p>
+
+      <div class="s5-cols">
+
+        <!-- Profile Quality -->
+        <div class="s5-block">
+          <div class="s5-block-head">Profile Quality</div>
+          <div class="s5-block-grid">
+            <div class="row"><span class="sig">Photo quality and count</span><span class="wt">40%</span></div>
+            <div class="row"><span class="sig">Profile completeness</span><span class="wt">30%</span></div>
+            <div class="row"><span class="sig">Bio quality</span><span class="wt">30%</span></div>
+          </div>
+          <div style="padding:10px 14px; background:#f0f0ed; font-family:'Archivo',sans-serif; font-size:14px; color:#3a3a3a; line-height:1.35;">
+            Clarity, variety, number uploaded · all fields filled, verified badge · prompts answered, length, tone.
+          </div>
+        </div>
+
+        <!-- Activity Score -->
+        <div class="s5-block">
+          <div class="s5-block-head">Activity Score</div>
+          <div class="s5-block-grid">
+            <div class="row"><span class="sig">Login frequency (last 7 days)</span><span class="wt">40%</span></div>
+            <div class="row"><span class="sig">Response rate to messages</span><span class="wt">35%</span></div>
+            <div class="row"><span class="sig">Daily swipe count</span><span class="wt">25%</span></div>
+          </div>
+          <div style="padding:10px 14px; background:#f0f0ed; font-family:'Archivo',sans-serif; font-size:14px; color:#3a3a3a; line-height:1.35;">
+            How often you open the app · how consistently you reply · how actively you swipe.
+          </div>
+        </div>
+
+        <!-- Interaction Modifiers -->
+        <div class="s5-block">
+          <div class="s5-block-head">Interaction Modifiers</div>
+          <div class="s5-mod-grid">
+            <div class="row">
+              <div class="behavior">Swipe rate 20 to 40%</div>
+              <div class="effect">+1.2x bonus. Treated as selective, high quality.</div>
+            </div>
+            <div class="row">
+              <div class="behavior">Swipe rate above 70%</div>
+              <div class="effect">0.5x penalty. Flagged as bot like.</div>
+            </div>
+            <div class="row">
+              <div class="behavior">Match with a high score user</div>
+              <div class="effect">Your score increases (ELO mechanic).</div>
+            </div>
+            <div class="row">
+              <div class="behavior">First message sent under 6hrs</div>
+              <div class="effect">+1.5x boost.</div>
+            </div>
+            <div class="row">
+              <div class="behavior">Active in last 24hrs</div>
+              <div class="effect">+1.5x applied across your entire score.</div>
+            </div>
+            <div class="row">
+              <div class="behavior">New user (Day 1 to 7)</div>
+              <div class="effect">Up to 2x temporary visibility boost.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="s5-bottom">
+        <div class="s5-biases">
+          <div class="k">Three Biases Baked In</div>
+          <ol>
+            <li><b>Looks first.</b> 40% of your score is photos before anyone reads a word you wrote.</li>
+            <li><b>Addicts win.</b> Daily logins beat serious daters who check in weekly.</li>
+            <li><b>Rich get richer.</b> More matches means higher score means more matches.</li>
+          </ol>
+        </div>
+        <div class="s5-quote">
+          "Two people. Same city. Same age. Genuinely compatible. One sees the other. One doesn't. Not incompatibility, just a score nobody told you about."
+        </div>
+      </div>
+
+      <div class="slide-foot"><span>05 / 10</span></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 6 — USER PERSONAS
+       ============================================================ -->
+  <section data-screen-label="06 User Personas">
+    <div class="slide">
+
+      <div class="slide-head">
+        <div class="num">06</div>
+        <div class="title">User Personas</div>
+      </div>
+
+      <p class="s6-intro">Four real archetypes. Same app. Completely different experiences before they even get to the match screen.</p>
+
+      <div class="s6-grid">
+
+        <!-- Ayush -->
+        <div class="persona">
+          <div class="persona-head">
+            <div class="name">Ayush Mishra</div>
+            <div class="meta">26 · Mumbai · Tier 1</div>
+          </div>
+          <div class="persona-stats">
+            <div class="s"><span class="l">Occupation</span><span class="v">Sales &amp; Marketing</span></div>
+            <div class="s"><span class="l">Status</span><span class="v">Single, new to city</span></div>
+            <div class="s"><span class="l">Goal</span><span class="v">Long term relationship</span></div>
+          </div>
+          <div class="persona-score">Beehive Score · <b>High.</b> Attractive photos carry him despite low completeness.</div>
+          <div class="persona-bio">Moved to Mumbai after college. Three photos, no bio filled. Doesn't think hard about the app, but the app thinks very highly of him.</div>
+
+          <div class="persona-section">
+            <div class="lbl">Core Needs</div>
+            <ul>
+              <li>Find someone he actually connects with, not just swipes with.</li>
+              <li>Cut through the noise of too many matches.</li>
+              <li>Figure out who's worth investing time in.</li>
+            </ul>
+          </div>
+
+          <div class="persona-section">
+            <div class="lbl">Frustrations</div>
+            <ul>
+              <li>15 to 20 matches a week but conversations stay surface level.</li>
+              <li>Paradox of choice. Too many options, commits to none.</li>
+              <li>Has never paid for Premium. Doesn't need to.</li>
+            </ul>
+          </div>
+
+          <div class="persona-quote">"Everyone seems fun to talk to. I just don't know who I actually want to meet."</div>
+        </div>
+
+        <!-- Magesh -->
+        <div class="persona">
+          <div class="persona-head">
+            <div class="name">Magesh Rajan</div>
+            <div class="meta">28 · Coimbatore · Tier 3</div>
+          </div>
+          <div class="persona-stats">
+            <div class="s"><span class="l">Occupation</span><span class="v">Product Designer</span></div>
+            <div class="s"><span class="l">Status</span><span class="v">Recently out of relationship</span></div>
+            <div class="s"><span class="l">Goal</span><span class="v">Casual, open to real</span></div>
+          </div>
+          <div class="persona-score">Beehive Score · <b>Medium.</b> Complete profile, but low user density compounds invisibility.</div>
+          <div class="persona-bio">Just came out of a 3 year relationship. Filled every field, added 6 photos, connected Spotify. Opens the app every day. Bought Premium last month. Still waiting.</div>
+
+          <div class="persona-section">
+            <div class="lbl">Core Needs</div>
+            <ul>
+              <li>At least one meaningful match a week.</li>
+              <li>Conversations that don't die before they start.</li>
+              <li>To feel like the app is working for him, not against him.</li>
+            </ul>
+          </div>
+
+          <div class="persona-section">
+            <div class="lbl">Frustrations</div>
+            <ul>
+              <li>One match a week. Half those conversations never open.</li>
+              <li>Low user density in Coimbatore. The pool is thin to start with.</li>
+              <li>Paid for Premium expecting more. ROI feels like zero.</li>
+              <li>Wonders if something is wrong with him, not the app.</li>
+            </ul>
+          </div>
+
+          <div class="persona-quote">"I did everything they say to do. Complete profile. Daily check ins. Even paid. Still nothing."</div>
+        </div>
+
+        <!-- Akriti -->
+        <div class="persona">
+          <div class="persona-head">
+            <div class="name">Akriti Sharma</div>
+            <div class="meta">24 · Pune · Tier 2</div>
+          </div>
+          <div class="persona-stats">
+            <div class="s"><span class="l">Occupation</span><span class="v">Marketing Associate</span></div>
+            <div class="s"><span class="l">Status</span><span class="v">Single, socially active</span></div>
+            <div class="s"><span class="l">Goal</span><span class="v">Open. Enjoys the process.</span></div>
+          </div>
+          <div class="persona-score">Beehive Score · <b>Very High.</b> Attractive, active, selective swiper.</div>
+          <div class="persona-bio">Not on Bumble with a rigid goal. Just lonely, enjoys conversations, open to seeing where things go. Great profile, witty bio. The algorithm loves her. Her inbox does not.</div>
+
+          <div class="persona-section">
+            <div class="lbl">Core Needs</div>
+            <ul>
+              <li>Conversations that go somewhere real.</li>
+              <li>A way to filter 300 matches without burning out.</li>
+              <li>Relief from the 24hr pressure to message first.</li>
+            </ul>
+          </div>
+
+          <div class="persona-section">
+            <div class="lbl">Frustrations</div>
+            <ul>
+              <li>Inbox paralysis. 300+ matches, no idea who any of them are anymore.</li>
+              <li>The 24hr clock creates anxiety, not excitement.</li>
+              <li>Messages whoever is most recent, not whoever she actually liked.</li>
+              <li>No system for managing the volume the app keeps sending her.</li>
+            </ul>
+          </div>
+
+          <div class="persona-quote">"I have 300 matches. I have no idea who any of them are."</div>
+        </div>
+
+        <!-- Vaishali -->
+        <div class="persona">
+          <div class="persona-head">
+            <div class="name">Vaishali Tiwari</div>
+            <div class="meta">27 · Indore · Tier 2</div>
+          </div>
+          <div class="persona-stats">
+            <div class="s"><span class="l">Occupation</span><span class="v">Chartered Accountant</span></div>
+            <div class="s"><span class="l">Status</span><span class="v">New in town, single</span></div>
+            <div class="s"><span class="l">Goal</span><span class="v">Serious, long term</span></div>
+          </div>
+          <div class="persona-score">Beehive Score · <b>Medium.</b> New user boost fading, cautious swiper.</div>
+          <div class="persona-bio">Chose Bumble specifically because women message first felt like control, not pressure. New to Indore after a job move. Serious about finding a relationship. Hasn't paid yet and unsure if she will.</div>
+
+          <div class="persona-section">
+            <div class="lbl">Core Needs</div>
+            <ul>
+              <li>A smaller, curated set of matches she can actually evaluate.</li>
+              <li>Confidence that matches are equally serious.</li>
+              <li>Enough nearby users to make the app feel worth using.</li>
+            </ul>
+          </div>
+
+          <div class="persona-section">
+            <div class="lbl">Frustrations</div>
+            <ul>
+              <li>Low user density. Same profiles cycling repeatedly.</li>
+              <li>Pressure to message first feels overwhelming.</li>
+              <li>Matches feel like strangers with no shared context.</li>
+              <li>Not sure Premium is worth it given how thin the pool already is.</li>
+            </ul>
+          </div>
+
+          <div class="persona-quote">"I chose Bumble because it felt safer. But I'm not sure the app has enough people here for it to even matter."</div>
+        </div>
+
+      </div>
+
+      <div class="slide-foot"><span>06 / 10</span></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 7 — WHAT WORKED WELL
+       ============================================================ -->
+  <section data-screen-label="07 What Worked Well">
+    <div class="slide">
+
+      <div class="slide-head">
+        <div class="num">07</div>
+        <div class="title">What Worked Well</div>
+      </div>
+
+      <div class="points-grid">
+
+        <div class="point">
+          <div class="n">01</div>
+          <div class="h">A Dedicated Space for Connection</div>
+          <div class="p">Bumble created a focused environment built only for meeting people. No dual purpose, no distractions. Users show up with intent, which raises the baseline quality of interaction compared to sliding into someone's Instagram DMs.</div>
+        </div>
+
+        <div class="point">
+          <div class="n">02</div>
+          <div class="h">Discovery at Your Fingertips</div>
+          <div class="p">Finding potential matches is genuinely effortless. Location filters, age range, and intent settings mean relevant profiles surface fast. The friction that made earlier dating methods feel exhausting is gone.</div>
+        </div>
+
+        <div class="point">
+          <div class="n">03</div>
+          <div class="h">Rich Profile Expression</div>
+          <div class="p">Beyond photos, Bumble gives users real tools to show personality. Written prompts, voice notes, Spotify integration, interest badges. When used well, you get a real sense of someone before the first message is sent.</div>
+        </div>
+
+        <div class="point">
+          <div class="n">04</div>
+          <div class="h">Women Message First, A Real Safety Innovation</div>
+          <div class="p">The 24hr female first rule was a genuine insight in 2014. It reduced unsolicited messages, gave women control over who enters their inbox, and made the app feel meaningfully safer than alternatives. Bold for its time, and it worked.</div>
+        </div>
+
+        <div class="point">
+          <div class="n">05</div>
+          <div class="h">Scale Creates Possibility</div>
+          <div class="p">350 million global users. In dense cities, the pool is large enough that the app can deliver real value through proximity and volume alone. Almost anyone can find someone compatible, at least on paper.</div>
+        </div>
+
+      </div>
+
+      <div class="slide-foot"><span>07 / 10</span></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 8 — WHERE BUMBLE FALLS SHORT
+       ============================================================ -->
+  <section data-screen-label="08 Where Bumble Falls Short">
+    <div class="slide">
+
+      <div class="slide-head">
+        <div class="num">08</div>
+        <div class="title">Where Bumble Falls Short</div>
+      </div>
+
+      <div class="points-grid">
+
+        <div class="point neg">
+          <div class="n">01</div>
+          <div class="h">Looks Are Everything</div>
+          <div class="p">40% of your Beehive score is photos. Before anyone reads your bio, hears your voice note, or sees what you wrote in your prompts, the algorithm has already ranked you on your face. Compatibility, values, and personality are permanently secondary to appearance.</div>
+        </div>
+
+        <div class="point neg">
+          <div class="n">02</div>
+          <div class="h">High Beehive Score Does Not Mean More Matches</div>
+          <div class="p">The algorithm can score you well and still not show you to the right people. Magesh has a complete profile, logs in daily, and bought Premium. He gets one match a week. Score measures effort. It does not guarantee outcome.</div>
+        </div>
+
+        <div class="point neg">
+          <div class="n">03</div>
+          <div class="h">Profile Effort Goes Unrewarded</div>
+          <div class="p">Users who fill every prompt, record voice notes, and write thoughtful bios are not meaningfully rewarded in visibility over someone with three good photos and nothing else. Ayush barely filled his profile. He gets 15+ matches a week. The signal the algorithm trusts most is still the face.</div>
+        </div>
+
+        <div class="point neg">
+          <div class="n">04</div>
+          <div class="h">The More You Swipe, The Emptier It Feels</div>
+          <div class="p">Swiping is a Skinner box. After 100 swipes, profiles stop feeling like people and start feeling like cards. Users report burnout not because they didn't find anyone, but because the mechanic itself erodes what connection is supposed to feel like.</div>
+        </div>
+
+        <div class="point neg">
+          <div class="n">05</div>
+          <div class="h">Built for Engagement, Not Dates</div>
+          <div class="p">Daily login bonuses, streak rewards, match expiry pressure, Spotlight boosts. Every gamification layer maximises time on app. None of it is designed to get you on an actual date. Bumble measures DAUs and subscription revenue. It does not measure dates had, relationships formed, or users who left because they found someone.</div>
+        </div>
+
+      </div>
+
+      <div class="slide-foot"><span>08 / 10</span></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 9 — WHAT A BETTER DATING APP WOULD DO DIFFERENTLY
+       ============================================================ -->
+  <section data-screen-label="09 A Better Dating App">
+    <div class="slide">
+
+      <div class="slide-head">
+        <div class="num">09</div>
+        <div class="title">What a Better Dating App Would Do Differently</div>
+      </div>
+
+      <div class="rec-grid">
+
+        <div class="rec">
+          <div class="n">01</div>
+          <div class="h">Weight Personality, Not Just Photos</div>
+          <div class="p">Reduce photo weight in scoring from 40% to 20%. Compensate with prompt quality, response thoughtfulness, and conversation depth. Compatibility filters (values, lifestyle, intent) carry real ranking weight.</div>
+          <div class="trade"><span class="tl">Trade off</span>Attractive users drive aspirational downloads. Reducing their advantage risks reducing top of funnel appeal and the aspirational effect that keeps mid tier users paying for Premium.</div>
+        </div>
+
+        <div class="rec">
+          <div class="n">02</div>
+          <div class="h">Decouple Beehive Score from Match Visibility</div>
+          <div class="p">A complete, thoughtful profile in Coimbatore should get proportionally more visibility within its local pool, not get buried because the pool is small. Effort and geography shouldn't compound each other.</div>
+          <div class="trade"><span class="tl">Trade off</span>The ELO system creates addictive aspiration. Everyone wants to climb the invisible ladder. Flattening it reduces the anxiety that drives Spotlight and Boost purchases.</div>
+        </div>
+
+        <div class="rec">
+          <div class="n">03</div>
+          <div class="h">Also Reward Profile Depth Over Photo Quality</div>
+          <div class="p">Surface voice notes, prompts, and shared interests as primary match signals, not afterthoughts. Users like Magesh who invest in their profile should demonstrably out match users like Ayush who don't.</div>
+          <div class="trade"><span class="tl">Trade off</span>Effort rewarding systems are slower to show results. Users expect instant gratification. A depth first approach increases early drop off before the payoff arrives.</div>
+        </div>
+
+        <div class="rec">
+          <div class="n">04</div>
+          <div class="h">Replace the Swipe with Intentional Discovery</div>
+          <div class="p">Limit daily swipes. Not to gatekeep, but to force intentionality. Fewer swipes per day means each one carries more weight. Profiles stop feeling like cards and start feeling like people.</div>
+          <div class="trade"><span class="tl">Trade off</span>Swipe volume is a core engagement metric. Reducing it lowers session time, which hurts advertising revenue and app store ranking signals.</div>
+        </div>
+
+        <div class="rec">
+          <div class="n">05</div>
+          <div class="h">Measure Dates, Not DAUs</div>
+          <div class="p">The north star metric shifts to dates had, not daily active users. Ask users post match: did you meet? Track the funnel all the way to the real world, not just to the inbox.</div>
+          <div class="trade"><span class="tl">Trade off</span>If Bumble optimises for dates, users delete the app faster. Every successful date is a lost subscriber. Fixing the metric means accepting that success looks like churn, and building a business model that survives that.</div>
+        </div>
+
+        <div class="rec we-met">
+          <div style="display:flex; align-items:baseline; gap:18px;">
+            <div class="n">06</div>
+            <div class="h" style="flex:1; border:none; padding:0;">Close the Loop. The 'We Met' Feature</div>
+          </div>
+          <div class="p">After a conversation crosses a depth signal (messages exchanged, time spent), Bumble surfaces one button in the chat: <b style="background:var(--yellow); color:var(--ink); padding:1px 6px; border-radius:3px;">'Did you meet up?'</b> with Yes or Not yet options. If yes, both users get a short post date card.</div>
+
+          <div class="we-grid">
+            <div>
+              <h4>The Post Date Card</h4>
+              <ul>
+                <li>Did they show up as their profile suggested?</li>
+                <li>Did you feel safe?</li>
+                <li>Would you recommend them to a friend?</li>
+              </ul>
+            </div>
+            <div>
+              <h4>What This Data Does</h4>
+              <ul>
+                <li>Feeds real world behaviour into the Beehive score for the first time.</li>
+                <li>Users who show up well on dates get boosted visibility.</li>
+                <li>Users who misrepresent themselves get quietly deprioritised.</li>
+                <li>Bumble finally has a metric connecting in app behaviour to real outcomes.</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Trade Off</h4>
+              <ul>
+                <li>Makes the app measurably better at getting people off it.</li>
+                <li>Opens a trust and safety liability around disputed ratings.</li>
+                <li>But a reputation system creates a moat no competitor has, and users who trust the platform stay longer, refer more, and pay more willingly.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="slide-foot"><span>09 / 10</span></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 10 — FEATURE PRIORITIZATION ROADMAP
+       ============================================================ -->
+  <section data-screen-label="10 Roadmap">
+    <div class="slide">
+
+      <div class="slide-head">
+        <div class="num">10</div>
+        <div class="title">Feature Prioritization. Quarterly Roadmap.</div>
+      </div>
+
+      <div class="s10-body">
+
+        <!-- LEFT: roadmap table -->
+        <div class="roadmap-table">
+          <div class="rt-head">
+            <span>Feature</span>
+            <span>User Impact</span>
+            <span>Revenue Impact</span>
+            <span>Build Effort</span>
+            <span style="text-align:center;">Qtr</span>
+          </div>
+
+          <div class="rt-row">
+            <span class="feat">'We Met' Button + Post Date Rating</span>
+            <span class="cell high">Very High</span>
+            <span class="cell">High <small>(long term)</small></span>
+            <span class="cell">Medium</span>
+            <span class="qchip q1">Q1</span>
+          </div>
+          <div class="rt-row">
+            <span class="feat">Swipe Limit + Intentional Discovery</span>
+            <span class="cell high">High</span>
+            <span class="cell">Medium</span>
+            <span class="cell">Low</span>
+            <span class="qchip q1">Q1</span>
+          </div>
+          <div class="rt-row">
+            <span class="feat">Personality &amp; Prompt Weight in Scoring</span>
+            <span class="cell high">High</span>
+            <span class="cell">Medium</span>
+            <span class="cell">High</span>
+            <span class="qchip q2">Q2</span>
+          </div>
+          <div class="rt-row">
+            <span class="feat">Tier Based Visibility Fix</span>
+            <span class="cell high">High</span>
+            <span class="cell">Low</span>
+            <span class="cell">Medium</span>
+            <span class="qchip q2">Q2</span>
+          </div>
+          <div class="rt-row">
+            <span class="feat">Decouple Beehive Score from Distribution</span>
+            <span class="cell high">High</span>
+            <span class="cell">Low</span>
+            <span class="cell">High</span>
+            <span class="qchip q3">Q3</span>
+          </div>
+          <div class="rt-row">
+            <span class="feat">Reward Profile Depth Over Photos</span>
+            <span class="cell">Medium</span>
+            <span class="cell">Medium</span>
+            <span class="cell">Medium</span>
+            <span class="qchip q3">Q3</span>
+          </div>
+          <div class="rt-row">
+            <span class="feat">Date as North Star Metric (DAU to Dates)</span>
+            <span class="cell high">Very High</span>
+            <span class="cell">Low <small>(short term)</small></span>
+            <span class="cell">Very High</span>
+            <span class="qchip q4">Q4</span>
+          </div>
+        </div>
+
+        <!-- RIGHT: how to read this -->
+        <div>
+          <div class="eye" style="margin-bottom:10px;">How to Read This</div>
+          <div class="s10-notes">
+            <div class="s10-note">
+              <div class="lbl">Q1<small>Quick wins</small></div>
+              <div class="t">Quick wins that build user trust without touching the core algorithm. These send a signal to users that Bumble is serious about real outcomes.</div>
+            </div>
+            <div class="s10-note">
+              <div class="lbl">Q2<small>Structural fixes</small></div>
+              <div class="t">Structural fixes requiring careful A/B testing. Algorithm changes need controlled rollout to avoid unintended drops in engagement.</div>
+            </div>
+            <div class="s10-note">
+              <div class="lbl">Q3<small>Deep system rewrites</small></div>
+              <div class="t">Decoupling Beehive score and rewarding profile depth means rebuilding matching logic at its core. High effort, but this is where the product starts feeling fundamentally different.</div>
+            </div>
+            <div class="s10-note">
+              <div class="lbl">Q4<small>The hardest conversation</small></div>
+              <div class="t">Shifting north star from DAUs to dates is a board level decision, not a product decision. Everything in Q1 through Q3 builds the business case for why it's necessary.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="s10-closer">
+        Bumble has to decide whether it wants to be the app that <b>keeps you swiping</b> or the app that <b>actually works</b>. Right now, it can't be both.
+      </div>
+
+      <div class="slide-foot"><span>10 / 10</span></div>
+    </div>
+  </section>
+
+</deck-stage>
+
+</body>
+</html>
